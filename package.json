@@ -1,0 +1,22 @@
+{
+  "license": "MIT",
+  "description": "A trafic monitoring on Github",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bulliby/didactic-bassoon.git"
+  },
+  "dependencies": {
+    "vue": "^2.5.17"
+  },
+  "devDependencies": {
+    "css-loader": "^1.0.1",
+    "vue-loader": "^15.4.2",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "scripts" : {
+    "build": "webpack --config ./build/webpack.config.dev.js"
+  }
+}
