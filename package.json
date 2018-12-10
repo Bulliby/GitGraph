@@ -6,6 +6,7 @@
     "url": "https://github.com/Bulliby/didactic-bassoon.git"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "vue": "^2.5.17"
   },
   "devDependencies": {
@@ -16,7 +17,8 @@
     "webpack": "^4.26.1",
     "webpack-cli": "^3.1.2"
   },
-  "scripts" : {
+  "scripts": {
+    "watch": "webpack -w --config ./build/webpack.config.dev.js",
     "build": "webpack --config ./build/webpack.config.dev.js"
   }
 }
