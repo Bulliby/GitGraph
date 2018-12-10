@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <h1 class="title">Monitor Github Traffic</h1>
-        {{ info }}
+        <img src="../Assets/GitHub.jpg"/>
     </div>
 </template>
 
@@ -20,9 +20,11 @@ export default {
     methods: {
     },
     mounted () {
+        /*
         axios
             .get('https://api.github.com', {headers : {'Authorization' : 'token ' + localStorage.token}})
             .then(response => this.info = response)
+        */
   }
 }
 </script>
