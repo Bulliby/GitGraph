@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
 import VueApollo from "vue-apollo"
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
+
 
 import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
@@ -36,7 +39,9 @@ const apolloClient = new ApolloClient({
   link: authLink.concat(httpLink),
   cache,
 })
+
 Vue.use(VueApollo)
+Vue.use(Vuetify)
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient,
