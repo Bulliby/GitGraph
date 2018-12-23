@@ -1,45 +1,32 @@
-<template>
-    <div>
-        <h4>{{ printName }}</h4>
-        <div>clones : {{ printClones }}</div>
-        <div>views : {{ printViews }}</div>
-    </div>
-</template>
 
 <script>
 
 import axios from 'axios';
 
 export default {
-    name: 'summaryRepo',
+    name: 'dataTable',
     data () {
         return {
             clones: 0,
-            views: 0
-        }
-    },
-    props: {
-        name: {
-            type: String
+            views: 0,
         }
     },
     computed: {
     },
     methods: {
-        getClones : function () {
+        getClones : function (index) {
             axios
-                .get('https://api.github.com/repos/Bulliby/' + this.name + '/traffic/clones', {headers : {'Authorization' : 'token ' + localStorage.token}})
+                .get('https://api.github.com/repos/Bulliby/' + this.repositories_name[index] + '/traffic/clones', {headers : {'Authorization' : 'token ' + localStorage.token}})
                 .then(response => this.clones = response)
         },
-        getViews: function() {
+        getViews: function(index) {
             axios
-                .get('https://api.github.com/repos/Bulliby/'+ this.name + '/traffic/views', {headers : {'Authorization' : 'token ' + localStorage.token}})
+                .get('https://api.github.com/repos/Bulliby/'+ this.repositories_name[index] + '/traffic/views', {headers : {'Authorization' : 'token ' + localStorage.token}})
                 .then(response => this.views = response)
         }
     },
     mounted() {
         this.getClones();
-        this.getViews();
     },
     computed:  {
         printClones() {
