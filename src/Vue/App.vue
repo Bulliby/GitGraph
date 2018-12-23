@@ -1,8 +1,8 @@
 <template>
     <div id="app">
-        {{ repo_names }}
         <h1 class="title">Monitor Github Traffic</h1>
         <img src="../Assets/GitHub.jpg"/>
+        {{ reposInfos }}
         <v-data-table v-if="user" :headers="headers" :items="reposInfos" class="elevation-1">
             <template slot="items" slot-scope="props"> 
                 <td>{{ props.item.name }}</td>
@@ -42,46 +42,43 @@ export default {
         }
     },
     methods: {
-        getClones : function (repo, count) {
+        getClones : function (repo) {
             return axios
                 .get('https://api.github.com/repos/Bulliby/' + repo + '/traffic/clones', {headers : {'Authorization' : 'token ' + localStorage.token}})
-                .then(response => {
-                    return {'count' : count, 'reponse' : response };
-                })
         },
-        getViews: function(repo, count) {
+        getViews: function(repo) {
             return axios
                 .get('https://api.github.com/repos/Bulliby/'+ repo + '/traffic/views', {headers : {'Authorization' : 'token ' + localStorage.token}})
-                .then(response => {
-                    return {'count' : count, 'reponse' : response };
-                })
         },
+    },
+    updated() {
+        this.repo_names;
     },
     computed: {
         repo_names () {
             if (this.user)
             {
-                let repos = this.user.repositories.nodes;
-                for (let count in this.user.repositories.nodes)
+                let pall1 = [];
+                let pall2 = [];
+                
+                for (let repo of this.user.repositories.nodes)
                 {
-                    this.reposInfos.push({});
-                    this.reposInfos[count].name = repos[count].name;
-
-                    this.getClones(repos[count].name, count).then((response) => {
-                        this.reposInfos[response.count].clone = response.response.data.uniques;
-                    }).catch(() => {
-                        throw 'La recuperation des datas est incomplete';
-                    });
-                    /*
-                    
-                    this.getViews(repo.name).then((response, count) => {
-                        this.reposInfos[response.count].view = response.response.data.uniques;
-                    }).catch(() => {
-                        throw 'La recuperation des datas est incomplete';
-                    });
-                    */
-                    count += 1;
+                    pall1.push(this.getClones(repo.name));
+                    pall2.push(this.getViews(repo.name));
+                    this.names.push(repo.name);
                 }
+                Promise.all(pall1).then((value) => { this.clones = value; });
+                Promise.all(pall2).then((value) => { this.views = value }).finally(() => {
+                    for (var i = 0; i != this.clones.length; i++)
+                    {
+                        let object = {};
+                        object.name = this.names[i];
+                        object.clone = this.clones[i].data.uniques;
+                        object.clone = this.views[i].data.uniques;
+                        this.reposInfos.push(object);
+                    }
+                });
+
             }
         },
     },
