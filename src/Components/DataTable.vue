@@ -10,12 +10,14 @@
 
 <script>
 
-import { REPOSITORIES } from '../Constants/gql.js';
 import axios from 'axios';
+import { REPOSITORIES } from '../Constants/gql.js';
+import 'vuetify/dist/vuetify.min.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+
 
 export default {
     name: 'DataTable',
-    components: {},
     data () {
         return {
             reposInfos: [],
