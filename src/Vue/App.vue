@@ -1,8 +1,12 @@
 <template>
-    <div id="app">
-        <img src="../Assets/GitHub.jpg"/>
+    <v-app id="app">
+    <v-content>
+        <v-layout align-center justify-center>
+            <img src="../Assets/GitHub.jpg"/>
+        </v-layout>
         <dataTable></dataTable>
-    </div>
+    </v-content>
+    </v-app>
 </template>
 
 <script>
@@ -20,3 +24,9 @@ export default {
     },
 }
 </script>
+
+<style scope>
+.theme--light.application {
+   background: white;
+}
+</style>
