@@ -1,5 +1,6 @@
 <template>
-    <v-data-table v-if="user" :headers="headers" :items="reposInfos" class="elevation-1">
+    <v-data-table v-if="user" :headers="headers" :items="reposInfos" :loading="load" class="elevation-1">
+        <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props"> 
             <td>{{ props.item.name }}</td>
             <td>{{ props.item.clone }}</td>
@@ -24,6 +25,7 @@ export default {
             clones: [],
             names: [],
             views: [],
+            load: false,
             headers: [
                 { text: 'Names', value: 'name' },
                 { text: 'Unique clones', value: 'clone' },
@@ -63,18 +65,19 @@ export default {
                     pall2.push(this.getViews(repo.name));
                     this.names.push(repo.name);
                 }
-
+                this.load = true;
                 Promise.all(pall1).then((value) => { this.clones = value; });
                 Promise.all(pall2).then((value) => { this.views = value }).finally(() => {
                     for (var i = 0; i != this.clones.length; i++)
                     {
+                        this.load = false
                         let object = {};
                         object.name = this.names[i];
                         object.clone = this.clones[i].data.uniques;
                         object.view = this.views[i].data.uniques;
                         this.reposInfos.push(object);
                     }
-                });
+                }).catch(() => { this.load = false; console.log('fail')});
                 
             }
         },
