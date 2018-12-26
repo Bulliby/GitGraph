@@ -36,8 +36,11 @@ export default {
     apollo: {
         user : {
             query: REPOSITORIES,
-        }
+            result ({ data, loading, networkStatus }) {
+                this.getReposStats();
+            },
     },
+        },
     methods: {
         getClones : function (repo) {
             return axios
@@ -47,40 +50,32 @@ export default {
             return axios
                 .get('https://api.github.com/repos/Bulliby/'+ repo + '/traffic/views', {headers : {'Authorization' : 'token ' + localStorage.token}})
         },
-    },
-    updated() {
-        this.repo_names;
+        getReposStats: function () {
+            let pall1 = [];
+            let pall2 = [];
+            
+            for (let repo of this.user.repositories.nodes)
+            {
+                pall1.push(this.getClones(repo.name));
+                pall2.push(this.getViews(repo.name));
+                this.names.push(repo.name);
+            }
+            this.load = true;
+            Promise.all(pall1).then((value) => { this.clones = value; });
+            Promise.all(pall2).then((value) => { this.views = value }).finally(() => {
+                for (var i = 0; i != this.clones.length; i++)
+                {
+                    this.load = false
+                    let object = {};
+                    object.name = this.names[i];
+                    object.clone = this.clones[i].data.uniques;
+                    object.view = this.views[i].data.uniques;
+                    this.reposInfos.push(object);
+                }
+            }).catch(() => { this.load = false; console.log('fail')});
+        },
     },
     computed: {
-        //TODO: Can we place it somewhere else than computed ?
-        repo_names () {
-            if (this.user)
-            {
-                let pall1 = [];
-                let pall2 = [];
-                
-                for (let repo of this.user.repositories.nodes)
-                {
-                    pall1.push(this.getClones(repo.name));
-                    pall2.push(this.getViews(repo.name));
-                    this.names.push(repo.name);
-                }
-                this.load = true;
-                Promise.all(pall1).then((value) => { this.clones = value; });
-                Promise.all(pall2).then((value) => { this.views = value }).finally(() => {
-                    for (var i = 0; i != this.clones.length; i++)
-                    {
-                        this.load = false
-                        let object = {};
-                        object.name = this.names[i];
-                        object.clone = this.clones[i].data.uniques;
-                        object.view = this.views[i].data.uniques;
-                        this.reposInfos.push(object);
-                    }
-                }).catch(() => { this.load = false; console.log('fail')});
-                
-            }
-        },
     },
 }
 </script>
