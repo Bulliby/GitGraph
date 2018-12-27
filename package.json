@@ -3,7 +3,7 @@
   "description": "A trafic monitoring on Github",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Bulliby/didactic-bassoon.git"
+    "url": "https://github.com/Bulliby/GitGraph.git"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.3.12",

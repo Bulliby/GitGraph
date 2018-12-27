@@ -6,7 +6,7 @@
 
 Generate a new access token from your Github account with the **public_repo** scope. Put the given token in LocalStorage, like this from the console :
 
-`LocalStorage.setItem('token', 'mytoken');`
+`localStorage.setItem('token', 'mytoken');`
 
 You can now use the application.
 
