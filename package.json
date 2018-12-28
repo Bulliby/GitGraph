@@ -14,6 +14,7 @@
     "axios": "^0.18.0",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
+    "http-server": "^0.11.1",
     "material-design-icons-iconfont": "^4.0.3",
     "vue": "^2.5.18",
     "vue-apollo": "^3.0.0-beta.26",
@@ -36,6 +37,7 @@
     "watch_dev": "webpack -w --config ./build/webpack.config.dev.js",
     "build_dev": "webpack --config ./build/webpack.config.dev.js",
     "watch_prod": "webpack -w --config ./build/webpack.config.prod.js",
-    "build_prod": "webpack --config ./build/webpack.config.prod.js"
+    "build_prod": "webpack --config ./build/webpack.config.prod.js",
+    "server": "./node_modules/http-server/bin/http-server dist -p 9898"
   }
 }
