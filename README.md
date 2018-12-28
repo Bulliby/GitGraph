@@ -1,6 +1,6 @@
 # Github traffic viewer
 
-> This is a whole front-end application. You have to put your token in LocalStorage for make it work.
+> This is a front-end application. You have to put your token in LocalStorage for make it work.
 
 ## Installation
 
