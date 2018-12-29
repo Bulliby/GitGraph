@@ -16,6 +16,10 @@ Generate a new access token from your Github account with the **public_repo** sc
 
 * `localStorage.setItem('token', 'mytoken');`
 
+Add also your name :
+
+* `localStorage.setItem('name', 'myname');`
+
 You can now use the application.
 
 Connect to :
