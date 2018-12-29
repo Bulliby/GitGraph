@@ -30,10 +30,10 @@ export default {
     },
     computed: {
         getToken () {
-            console.log(localStorage.token);
-            if (localStorage.token == '' || localStorage.token == undefined)
+            if (localStorage.token == '' || localStorage.token == undefined 
+                || localStorage.name == '' || localStorage.name == undefined)
                 return false;
-            return localStorage.token;
+            return true;
         }
     }
 }

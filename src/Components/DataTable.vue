@@ -44,11 +44,11 @@ export default {
     methods: {
         getClones : function (repo) {
             return axios
-                .get('https://api.github.com/repos/Bulliby/' + repo + '/traffic/clones', {headers : {'Authorization' : 'token ' + localStorage.token}})
+                .get('https://api.github.com/repos/' + localStorage.name + '/' + repo + '/traffic/clones', {headers : {'Authorization' : 'token ' + localStorage.token}})
         },
         getViews: function(repo) {
             return axios
-                .get('https://api.github.com/repos/Bulliby/'+ repo + '/traffic/views', {headers : {'Authorization' : 'token ' + localStorage.token}})
+                .get('https://api.github.com/repos/' + localStorage.name + '/'+ repo + '/traffic/views', {headers : {'Authorization' : 'token ' + localStorage.token}})
         },
         getReposStats: function () {
             let pall1 = [];
