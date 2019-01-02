@@ -26,3 +26,6 @@ Connect to :
 
 * `http://127.0.0.1:9898/`
 
+## TODO
+
+[ ] a modal for obtain more information on selected repo
