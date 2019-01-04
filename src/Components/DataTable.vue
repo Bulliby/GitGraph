@@ -2,9 +2,7 @@
     <v-data-table v-if="user" :headers="headers" :items="reposInfos" :loading="load" class="elevation-1">
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props"> 
-            <td>{{ props.item.name }}</td>
-            <td>{{ props.item.clone }}</td>
-            <td>{{ props.item.view }}</td>
+            <test :item="props.item"></test>
         </template>
     </v-data-table>
 </template>
@@ -12,6 +10,7 @@
 <script>
 
 import axios from 'axios';
+import test from './Test.vue';
 import { REPOSITORIES } from '../Constants/gql.js';
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
@@ -19,6 +18,9 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 export default {
     name: 'DataTable',
+    components: { 
+        test
+    },
     data () {
         return {
             reposInfos: [],
@@ -76,6 +78,9 @@ export default {
         },
     },
     computed: {
+        link() {
+            return `https://github.com/${localStorage.name}/`
+        }
     },
 }
 </script>
