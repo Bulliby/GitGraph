@@ -2,7 +2,9 @@
     <v-data-table v-if="user" :headers="headers" :items="reposInfos" :loading="load" class="elevation-1">
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props"> 
-            <test :item="props.item"></test>
+            <td @click="seeRepo(props.item)" class="link">{{ props.item.name }}</td>
+            <td>{{ props.item.clone }}</td>
+            <td>{{ props.item.view }}</td>
         </template>
     </v-data-table>
 </template>
@@ -76,11 +78,19 @@ export default {
                 }
             }).catch(() => { this.load = false; console.log('fail')});
         },
+        seeRepo: function(dataTableItem) {
+            window.location.href = `https://github.com/${localStorage.name}/${dataTableItem.name}`
+        }
     },
     computed: {
-        link() {
-            return `https://github.com/${localStorage.name}/`
-        }
     },
 }
 </script>
+
+<style>
+.link {
+    color: #1976d2;
+    text-decoration: underline;
+    cursor: pointer;
+}
+</style>
