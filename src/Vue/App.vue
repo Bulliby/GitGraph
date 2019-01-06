@@ -2,10 +2,13 @@
     <v-app id="app">
         <div v-if="getToken">
             <v-content>
+                <v-alert :value="error" type="error">
+                    The app can't get stats from your github account. Check that you have put your username and token in localStorage
+                </v-alert>
                 <v-layout align-center justify-center>
                     <img src="../Assets/GitHub.jpg"/>
                 </v-layout>
-                <dataTable></dataTable>
+                <dataTable v-on:dataFetchingFailed="onDataFetchingFailed"></dataTable>
             </v-content>
         </div>
         <div v-else>
@@ -26,6 +29,7 @@ export default {
     },
     data () {
         return {
+            error: false
         }
     },
     computed: {
@@ -35,7 +39,12 @@ export default {
                 return false;
             return true;
         }
-    }
+    },
+    methods: {
+        onDataFetchingFailed: function () {
+            this.error = true;
+        }
+    },
 }
 </script>
 

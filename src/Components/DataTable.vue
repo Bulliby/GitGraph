@@ -65,11 +65,15 @@ export default {
             this.load = true;
 
             Promise.all(this.clones).then((value) => { 
+
                 this.clones = value; 
                 return Promise.all(this.views).then((value) => { 
                     this.views = value 
+
                 })
             }).finally(() => {
+
+                //this.clones.pop();
                 if (this.clones.length != this.views.length)
                     throw new Error("There is disparity between views and clones array lenth", 'DataTable.vue', Number(75));
 
@@ -85,7 +89,9 @@ export default {
                 }
 
             }).catch((error) => { 
+
                 this.load = false; 
+                this.$emit('dataFetchingFailed');
                 throw new Error(error);
             });
         },
@@ -101,5 +107,6 @@ export default {
 <style>
 .link {
     text-decoration: none;         
+    vertical-align: middle;
 }
 </style>
