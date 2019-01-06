@@ -12,7 +12,6 @@
 <script>
 
 import axios from 'axios';
-import test from './Test.vue';
 import { REPOSITORIES } from '../Constants/gql.js';
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
@@ -21,7 +20,6 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 export default {
     name: 'DataTable',
     components: { 
-        test
     },
     data () {
         return {
@@ -41,7 +39,7 @@ export default {
         user : {
             query: REPOSITORIES,
             result ({ data, loading, networkStatus }) {
-                this.getReposStats();
+                this.getAxiosPromises(data.user.repositories.nodes);
             },
     },
         },
@@ -54,29 +52,42 @@ export default {
             return axios
                 .get('https://api.github.com/repos/' + localStorage.name + '/'+ repo + '/traffic/views', {headers : {'Authorization' : 'token ' + localStorage.token}})
         },
-        getReposStats: function () {
-            let pall1 = [];
-            let pall2 = [];
-            
-            for (let repo of this.user.repositories.nodes)
+        getAxiosPromises: function(repos) {
+            for (let repo of repos)
             {
-                pall1.push(this.getClones(repo.name));
-                pall2.push(this.getViews(repo.name));
+                this.clones.push(this.getClones(repo.name));
+                this.views.push(this.getViews(repo.name));
                 this.names.push(repo.name);
             }
+            this.getReposStats();
+        },
+        getReposStats: function () {
             this.load = true;
-            Promise.all(pall1).then((value) => { this.clones = value; });
-            Promise.all(pall2).then((value) => { this.views = value }).finally(() => {
-                for (var i = 0; i != this.clones.length; i++)
+
+            Promise.all(this.clones).then((value) => { 
+                this.clones = value; 
+                return Promise.all(this.views).then((value) => { 
+                    this.views = value 
+                })
+            }).finally(() => {
+                if (this.clones.length != this.views.length)
+                    throw new Error("There is disparity between views and clones array lenth", 'DataTable.vue', Number(75));
+
+                for (let repo = 0; repo != this.clones.length; repo++)
                 {
                     this.load = false
-                    let object = {};
-                    object.name = this.names[i];
-                    object.clone = this.clones[i].data.uniques;
-                    object.view = this.views[i].data.uniques;
-                    this.reposInfos.push(object);
+
+                    let stats = {};
+                    stats.name = this.names[repo];
+                    stats.clone = this.clones[repo].data.uniques;
+                    stats.view = this.views[repo].data.uniques;
+                    this.reposInfos.push(stats);
                 }
-            }).catch(() => { this.load = false; console.log('fail')});
+
+            }).catch((error) => { 
+                this.load = false; 
+                throw new Error(error);
+            });
         },
         seeRepo: function(dataTableItem) {
             return `https://github.com/${localStorage.name}/${dataTableItem.name}`
