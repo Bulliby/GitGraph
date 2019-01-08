@@ -34,7 +34,7 @@ export default {
                 { text: 'Unique views', value: 'view' }
             ],
             pagination: {
-                rowsPerPage: 10
+                rowsPerPage: 7
             }
         }
     },
