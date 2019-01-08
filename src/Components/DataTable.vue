@@ -44,6 +44,9 @@ export default {
             result ({ data, loading, networkStatus }) {
                 this.getAxiosPromises(data.user.repositories.nodes);
             },
+            error(error) {
+                this.$emit('dataFetchingFailed');
+            }
     },
         },
     methods: {
@@ -78,6 +81,7 @@ export default {
 
                 //this.clones.pop();
                 if (this.clones.length != this.views.length)
+                    //Number line doesn't works on chrome and not on firefox ^^
                     throw new Error("There is disparity between views and clones array lenth", 'DataTable.vue', Number(75));
 
                 for (let repo = 0; repo != this.clones.length; repo++)
