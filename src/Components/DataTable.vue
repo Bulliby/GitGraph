@@ -1,5 +1,5 @@
 <template>
-    <v-data-table v-if="user" :headers="headers" :items="reposInfos" :loading="load" class="elevation-1">
+    <v-data-table v-if="user" :headers="headers" :pagination.sync="pagination" :items="reposInfos" :loading="load" class="elevation-1">
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props"> 
             <a :href="seeRepo(props.item)" target="_blank" class="link"><td>{{ props.item.name }}</td></a>
@@ -33,6 +33,9 @@ export default {
                 { text: 'Unique clones', value: 'clone' },
                 { text: 'Unique views', value: 'view' }
             ],
+            pagination: {
+                rowsPerPage: 10
+            }
         }
     },
     apollo: {
