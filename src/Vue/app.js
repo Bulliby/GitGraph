@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import VueApollo from "vue-apollo"
 import Vuetify from 'vuetify'
+import Login from './Login.js' 
 
 
 import { ApolloClient } from 'apollo-client'
@@ -32,6 +33,7 @@ const apolloClient = new ApolloClient({
   cache,
 })
 
+
 Vue.use(VueApollo)
 Vue.use(Vuetify)
 
@@ -44,3 +46,5 @@ const app = new Vue({
     apolloProvider,
     render: h => h(App),
 });
+
+Login.login
