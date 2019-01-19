@@ -1,6 +1,7 @@
 <template>
     <v-app id="app">
-        <div v-if="getToken">
+        <button  @click="handleLogin()">Log In</button>
+        <!--div v-if="getToken">
             <v-layout align-center justify-center>
                 <img src="../Assets/GitHub.jpg"/>
             </v-layout>
@@ -13,7 +14,7 @@
         </div>
         <div v-else>
             <AccessTokenNeeded></AccessTokenNeeded>
-        </div>
+        </div!-->
     </v-app>
 </template>
 
@@ -22,6 +23,7 @@
 import dataTable from '../Components/DataTable.vue';
 import Logo from '../Components/Logo.vue';
 import AccessTokenNeeded from '../Components/AccessTokenNeeded.vue';
+import { login } from './Login.js';
 
 export default {
     name: 'App',
@@ -44,6 +46,9 @@ export default {
     methods: {
         onDataFetchingFailed: function () {
             this.error = true;
+        },
+        handleLogin: function () {
+            login();
         }
     },
     created : function () {
