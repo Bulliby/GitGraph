@@ -1,6 +1,7 @@
 <template>
     <v-app id="app">
         <button  @click="handleLogin()">Log In</button>
+        <router-view></router-view>
         <!--div v-if="getToken">
             <v-layout align-center justify-center>
                 <img src="../Assets/GitHub.jpg"/>

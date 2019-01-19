@@ -9,6 +9,7 @@ export default function login() {
     auth.authorize({
         responseType: 'code',
         scope: 'public_repo',
-        connection: 'github'
+        connection: 'github',
+        redirectUri: 'http://gitgraph/github-auth'
     });
 }

@@ -1,8 +1,10 @@
 import Vue from 'vue'
+import VueRouter from 'vue-router'
 import App from './App.vue'
 import VueApollo from "vue-apollo"
 import Vuetify from 'vuetify'
 import Login from './Login.js' 
+import GithubAuth from './GithubAuth.vue';
 
 
 import { ApolloClient } from 'apollo-client'
@@ -36,15 +38,24 @@ const apolloClient = new ApolloClient({
 
 Vue.use(VueApollo)
 Vue.use(Vuetify)
+Vue.use(VueRouter)
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient,
+})
+
+const routes = [
+    { path: '/github-auth', name: "auth", component: GithubAuth }
+]
+
+const router = new VueRouter({
+    mode: 'history',
+    routes
 })
 
 const app = new Vue({
     el: '#app',
     apolloProvider,
     render: h => h(App),
+    router
 });
-
-Login.login
