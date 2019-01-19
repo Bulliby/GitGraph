@@ -24,7 +24,7 @@
 import dataTable from '../Components/DataTable.vue';
 import Logo from '../Components/Logo.vue';
 import AccessTokenNeeded from '../Components/AccessTokenNeeded.vue';
-import login from './Login.js';
+import  { login } from './Login.js';
 
 export default {
     name: 'App',
