@@ -5,8 +5,9 @@
 </template>
 
 <script>
+
 import axios from 'axios';
-import  { requestToken } from './Login.js';
+import  { requestToken, getCode } from './Login.js';
 
 export default {
     data () {
@@ -19,12 +20,17 @@ export default {
     },
     methods: {
         getToken: function () {
-            requestToken(this.code);
+            getCode();
+        },
+        getUserName: function () {
         }
     },
     created: function () {
+        /*
         this.code = this.$route.query.code;
         this.state = this.$route.query.state;
+        localStorage.setItem('name', this.getUserName());
+        */
         this.getToken();
     }
 }
