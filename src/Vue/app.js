@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import App from './App.vue'
 import VueApollo from "vue-apollo"
 import Vuetify from 'vuetify'
-import Login from './Login.js' 
 import GithubAuth from './GithubAuth.vue';
 
 

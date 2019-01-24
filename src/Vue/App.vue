@@ -1,9 +1,8 @@
 <template>
     <v-app id="app">
-        <!--button  @click="handleLogin()">Log In</button!-->
         <a :href="getLink">LogIn</a>
         <router-view></router-view>
-        <!--div v-if="getToken">
+        <div v-if="getToken">
             <v-layout align-center justify-center>
                 <img src="../Assets/GitHub.jpg"/>
             </v-layout>
@@ -16,7 +15,7 @@
         </div>
         <div v-else>
             <AccessTokenNeeded></AccessTokenNeeded>
-        </div!-->
+        </div>
     </v-app>
 </template>
 
@@ -25,7 +24,6 @@
 import dataTable from '../Components/DataTable.vue';
 import Logo from '../Components/Logo.vue';
 import AccessTokenNeeded from '../Components/AccessTokenNeeded.vue';
-import { login } from './Login.js'
 
 export default {
     name: 'App',
@@ -45,16 +43,13 @@ export default {
             return true;
         },
         getLink() {
-            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=3c47a9a8faf9b82f5634&redirect_uri=http://oauth/auth.php';
+            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=3c47a9a8faf9b82f5634&redirect_uri=http://gitgraph/github-auth';
         }
     },
     methods: {
         onDataFetchingFailed: function () {
             this.error = true;
         },
-        handleLogin: function () {
-            login();
-        }
     },
     created : function () {
     }

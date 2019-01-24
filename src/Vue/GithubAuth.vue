@@ -7,25 +7,27 @@
 <script>
 
 import axios from 'axios';
-import  { requestToken} from './Login.js';
 
 export default {
     data () {
         return {
-            code: null,
-            state: null
         }
     },
     computed: {
     },
     methods: {
-        getToken: function () {
-        },
-        getUserName: function () {
-        }
     },
     created: function () {
-        
+        let code = this.$route.query.code;
+        if (code != undefined)
+        {
+            axios.post('http://oauth/auth.php?code=' + code)
+                .then((r) => { 
+                    localStorage.token = r.data.access_token; 
+                }).catch((e) => { 
+                    console.log("The access token can't be requested") 
+                });
+        }
     }
 }
 </script>
