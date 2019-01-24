@@ -28,4 +28,4 @@ Connect to :
 
 ## TODO
 
-[ ] a modal for obtain more information on selected repo
+- [ ] a modal for obtain more information on selected repo
