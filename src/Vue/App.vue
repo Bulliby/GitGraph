@@ -1,6 +1,7 @@
 <template>
     <v-app id="app">
-        <button  @click="handleLogin()">Log In</button>
+        <!--button  @click="handleLogin()">Log In</button!-->
+        <a :href="getLink">LogIn</a>
         <router-view></router-view>
         <!--div v-if="getToken">
             <v-layout align-center justify-center>
@@ -24,7 +25,7 @@
 import dataTable from '../Components/DataTable.vue';
 import Logo from '../Components/Logo.vue';
 import AccessTokenNeeded from '../Components/AccessTokenNeeded.vue';
-import  { login } from './Login.js';
+import { login } from './Login.js'
 
 export default {
     name: 'App',
@@ -42,6 +43,9 @@ export default {
                 || localStorage.name == '' || localStorage.name == undefined)
                 return false;
             return true;
+        },
+        getLink() {
+            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=3c47a9a8faf9b82f5634&redirect_uri=http://oauth/auth.php';
         }
     },
     methods: {
