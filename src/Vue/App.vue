@@ -8,6 +8,7 @@
                 <v-alert :value="error" type="error">
                     The app can't get stats from your github account.
                 </v-alert>
+                <button @click="logout()"><v-icon>exit_to_app</v-icon>Log out</button>
                 <dataTable v-on:dataFetchingFailed="onDataFetchingFailed"></dataTable>
             </v-content>
         </div>
@@ -31,19 +32,21 @@
 <script>
 
 import dataTable from '../Components/DataTable.vue';
-import Logo from '../Components/Logo.vue';
 import AccessTokenNeeded from '../Components/AccessTokenNeeded.vue';
 import axios from 'axios';
+import ApiRequester from './ApiRequester.js';
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 export default {
     name: 'App',
     components: { 
-        dataTable, AccessTokenNeeded, Logo
+        dataTable, AccessTokenNeeded
     },
     data () {
         return {
             error: false,
-            gettingToken: false
+            gettingToken: false,
+            apiRequester: null
         }
     },
     computed: {
@@ -59,28 +62,40 @@ export default {
             location.assign(this.getLink);
         },
         getToken: function () {
-            if (localStorage.token == '' || localStorage.token == 'undefined' 
-                || localStorage.name == '' || localStorage.name == 'undefined')
+            if (localStorage.token == '' || localStorage.token == undefined 
+                || localStorage.name == '' || localStorage.name == undefined)
                 return false;
             return true;
         },
+        logout: function () {
+            localStorage.removeItem('token');
+            localStorage.removeItem('name');
+            this.$forceUpdate();
+        }
     },
     created : function () {
         let code = this.$route.query.code;
+
         if (code != undefined)
         {
             this.gettingToken = true;
             axios.post('http://oauth/auth.php?code=' + code)
                 .then((r) => { 
                     localStorage.token = r.data.access_token; 
-                    this.gettingToken = false;
+                    this.apiRequester = new ApiRequester(localStorage.token, 'https://api.github.com');
+                    this.apiRequester.getUser().then((r) => {
+                        localStorage.setItem('name', r.data.login);
+                    }).finally(() => {
+                        this.$router.push("/");
+                        this.gettingToken = false;
+                    });
                 }).catch((e) => { 
                     console.log("The access token can't be requested") 
-                    this.gettingToken = false;
-                }).finally(() => {
-                    this.$router.push("/");
                 });
         }
+        else
+            this.$router.push("/");
+
     }
 }
 </script>

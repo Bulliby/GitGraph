@@ -13,6 +13,7 @@
 
 import axios from 'axios';
 import { REPOSITORIES } from '../Constants/gql.js';
+import ApiRequester from '../Vue/ApiRequester.js';
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
@@ -35,8 +36,12 @@ export default {
             ],
             pagination: {
                 rowsPerPage: 7
-            }
+            },
+            apiRequester: null
         }
+    },
+    created: function() {
+        this.apiRequester = new ApiRequester(localStorage.token, 'https://api.github.com', localStorage.name);
     },
     apollo: {
         user : {
@@ -51,12 +56,10 @@ export default {
         },
     methods: {
         getClones : function (repo) {
-            return axios
-                .get('https://api.github.com/repos/' + localStorage.name + '/' + repo + '/traffic/clones', {headers : {'Authorization' : 'token ' + localStorage.token}})
+            return this.apiRequester.getClones(repo);
         },
         getViews: function(repo) {
-            return axios
-                .get('https://api.github.com/repos/' + localStorage.name + '/'+ repo + '/traffic/views', {headers : {'Authorization' : 'token ' + localStorage.token}})
+            return this.apiRequester.getViews(repo);
         },
         getAxiosPromises: function(repos) {
             for (let repo of repos)
