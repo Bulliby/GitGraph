@@ -52,7 +52,7 @@ export default {
     },
     computed: {
         getLink() {
-            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=3c47a9a8faf9b82f5634&state=' + this.state + '&redirect_uri=http://gitgraph.wellsguillaume.fr';
+            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=3c47a9a8faf9b82f5634&state=' + this.state + '&redirect_uri=https://gitgraph.wellsguillaume.fr';
         }
     },
     methods: {
@@ -96,6 +96,8 @@ export default {
                         this.gettingToken = false;
                     });
                 }).catch((e) => { 
+                    this.$router.push("/");
+                    this.gettingToken = false;
                     console.log("The access token can't be requested") 
                 });
         }
