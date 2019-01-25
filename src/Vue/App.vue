@@ -113,7 +113,7 @@ export default {
         -webkit-transition: background 0.3s;
     }
     .login-github-button {
-        background-color: #333;
+        background-color: black;
         padding: 0;
         box-sizing: border-box;
         overflow: hidden;
