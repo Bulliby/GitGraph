@@ -46,12 +46,13 @@ export default {
         return {
             error: false,
             gettingToken: false,
-            apiRequester: null
+            apiRequester: null,
+            state: null
         }
     },
     computed: {
         getLink() {
-            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=3c47a9a8faf9b82f5634&redirect_uri=http://gitgraph';
+            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=3c47a9a8faf9b82f5634&state=' + this.state + '&redirect_uri=http://gitgraph.wellsguillaume.fr';
         }
     },
     methods: {
@@ -71,15 +72,20 @@ export default {
             localStorage.removeItem('token');
             localStorage.removeItem('name');
             this.$forceUpdate();
-        }
+        },
+        getState () {
+            return Math.random().toString(36);
+        },
+
     },
     created : function () {
         let code = this.$route.query.code;
+        this.state = this.getState();
 
         if (code != undefined)
         {
             this.gettingToken = true;
-            axios.post('http://oauth/auth.php?code=' + code)
+            axios.post('https://oauth.wellsguillaume.fr/auth.php?code=' + code + '&state=' + this.state)
                 .then((r) => { 
                     localStorage.token = r.data.access_token; 
                     this.apiRequester = new ApiRequester(localStorage.token, 'https://api.github.com');
