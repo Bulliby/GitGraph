@@ -1,10 +1,9 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
 import App from './App.vue'
 import VueApollo from "vue-apollo"
 import Vuetify from 'vuetify'
-import GithubAuth from './GithubAuth.vue';
-
+import router from './routing.js'
+import { VueRouter } from './routing.js'
 
 import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
@@ -41,15 +40,6 @@ Vue.use(VueRouter)
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient,
-})
-
-const routes = [
-    { path: '/github-auth', name: "auth", component: GithubAuth }
-]
-
-const router = new VueRouter({
-    mode: 'history',
-    routes
 })
 
 const app = new Vue({

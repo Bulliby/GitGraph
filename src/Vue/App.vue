@@ -1,20 +1,19 @@
 <template>
     <v-app id="app">
-        <a :href="getLink">LogIn</a>
-        <router-view></router-view>
+        <v-layout align-center justify-center>
+            <img src="../Assets/GitHub.jpg"/>
+        </v-layout>
         <div v-if="getToken">
-            <v-layout align-center justify-center>
-                <img src="../Assets/GitHub.jpg"/>
-            </v-layout>
             <v-content>
                 <v-alert :value="error" type="error">
-                    The app can't get stats from your github account. Check that you have put your username and token in localStorage
+                    The app can't get stats from your github account.
                 </v-alert>
                 <dataTable v-on:dataFetchingFailed="onDataFetchingFailed"></dataTable>
             </v-content>
         </div>
         <div v-else>
-            <AccessTokenNeeded></AccessTokenNeeded>
+            <a :href="getLink">LogIn</a>
+            <router-view></router-view>
         </div>
     </v-app>
 </template>
