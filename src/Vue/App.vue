@@ -1,6 +1,9 @@
 <template>
     <v-app id="app">
-        <div v-if="getToken">
+        <div v-if="getToken()">
+            <v-layout align-center justify-center>
+                <img src="../Assets/GitHub.jpg"/>
+            </v-layout>
             <v-content>
                 <v-alert :value="error" type="error">
                     The app can't get stats from your github account.
@@ -13,14 +16,14 @@
                 <img src="../Assets/GitHub.jpg"/>
             </v-layout>
             <v-layout align-center justify-center>
-                <div class="login">
+                <v-progress-circular v-if="gettingToken" :size="70" :width="7" color="black" indeterminate ></v-progress-circular>
+                <div v-else class="login" @click="githubConnect">
                     <button class="login-github-button" type="button">
                         <div class="login-github-icon"></div>
                         <div class="login-github-text">Log in with Github</div>
                     </button>
                 </div>
             </v-layout>
-            <router-view></router-view>
         </div>
     </v-app>
 </template>
@@ -30,6 +33,7 @@
 import dataTable from '../Components/DataTable.vue';
 import Logo from '../Components/Logo.vue';
 import AccessTokenNeeded from '../Components/AccessTokenNeeded.vue';
+import axios from 'axios';
 
 export default {
     name: 'App',
@@ -38,26 +42,45 @@ export default {
     },
     data () {
         return {
-            error: false
+            error: false,
+            gettingToken: false
         }
     },
     computed: {
-        getToken () {
-            if (localStorage.token == '' || localStorage.token == undefined 
-                || localStorage.name == '' || localStorage.name == undefined)
-                return false;
-            return true;
-        },
         getLink() {
-            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=3c47a9a8faf9b82f5634&redirect_uri=http://gitgraph/github-auth';
+            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=3c47a9a8faf9b82f5634&redirect_uri=http://gitgraph';
         }
     },
     methods: {
         onDataFetchingFailed: function () {
             this.error = true;
         },
+        githubConnect: function () {
+            location.assign(this.getLink);
+        },
+        getToken: function () {
+            if (localStorage.token == '' || localStorage.token == 'undefined' 
+                || localStorage.name == '' || localStorage.name == 'undefined')
+                return false;
+            return true;
+        },
     },
     created : function () {
+        let code = this.$route.query.code;
+        if (code != undefined)
+        {
+            this.gettingToken = true;
+            axios.post('http://oauth/auth.php?code=' + code)
+                .then((r) => { 
+                    localStorage.token = r.data.access_token; 
+                    this.gettingToken = false;
+                }).catch((e) => { 
+                    console.log("The access token can't be requested") 
+                    this.gettingToken = false;
+                }).finally(() => {
+                    this.$router.push("/");
+                });
+        }
     }
 }
 </script>
