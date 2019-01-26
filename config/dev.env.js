@@ -4,5 +4,5 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  BASE_URL: '"http://gitgraph"'
+  REDIRECT_URL: '"http://gitgraph"'
 })
