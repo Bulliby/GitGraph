@@ -46,6 +46,9 @@ export default {
     apollo: {
         user : {
             query: REPOSITORIES,
+            variables: {
+                name : localStorage.name
+            },
             result ({ data, loading, networkStatus }) {
                 this.getAxiosPromises(data.user.repositories.nodes);
             },

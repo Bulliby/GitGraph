@@ -81,7 +81,7 @@ export default {
     created : function () {
         let code = this.$route.query.code;
         this.state = this.getState();
-
+        console.log(process.env.BASE_URL);
         if (code != undefined)
         {
             this.gettingToken = true;
