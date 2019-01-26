@@ -1,5 +1,5 @@
 <template>
-    <v-data-table v-if="user" :headers="headers" :pagination.sync="pagination" :items="reposInfos" :loading="load" class="elevation-1">
+    <v-data-table :headers="headers" :pagination.sync="pagination" :items="reposInfos" :loading="load" class="elevation-1">
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props"> 
             <a :href="seeRepo(props.item)" target="_blank" class="link"><td>{{ props.item.name }}</td></a>
@@ -21,6 +21,11 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 export default {
     name: 'DataTable',
     components: { 
+    },
+    props: {
+        name: {
+            type: String
+        }
     },
     data () {
         return {
@@ -46,14 +51,19 @@ export default {
     apollo: {
         user : {
             query: REPOSITORIES,
+            variables() {
+                return {
+                    login: this.name
+                }
+            },
             result ({ data, loading, networkStatus }) {
                 this.getAxiosPromises(data.user.repositories.nodes);
             },
             error(error) {
                 this.$emit('dataFetchingFailed');
             }
-    },
         },
+    },
     methods: {
         getClones : function (repo) {
             return this.apiRequester.getClones(repo);

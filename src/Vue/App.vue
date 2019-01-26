@@ -9,7 +9,7 @@
                     The app can't get stats from your github account.
                 </v-alert>
                 <button @click="logout()"><v-icon>exit_to_app</v-icon>Log out</button>
-                <dataTable v-on:dataFetchingFailed="onDataFetchingFailed"></dataTable>
+                <dataTable v-if="name" :name="name" v-on:dataFetchingFailed="onDataFetchingFailed"></dataTable>
             </v-content>
         </div>
         <div v-else>
@@ -47,7 +47,8 @@ export default {
             error: false,
             gettingToken: false,
             apiRequester: null,
-            state: null
+            state: null,
+            name: localStorage.name
         }
     },
     computed: {
@@ -90,6 +91,7 @@ export default {
                     this.apiRequester = new ApiRequester(localStorage.token, 'https://api.github.com');
                     this.apiRequester.getUser().then((r) => {
                         localStorage.setItem('name', r.data.login);
+                        this.name = r.data.login;
                     }).finally(() => {
                         this.$router.push("/");
                         this.gettingToken = false;
