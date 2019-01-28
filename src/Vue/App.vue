@@ -53,7 +53,7 @@ export default {
     computed: {
         getLink() {
             console.log(process.env.REDIRECT_URL);
-            return 'https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=' + process.env.CLIENT_ID +'&state=' + this.state + '&redirect_uri=' + process.env.REDIRECT_URL;
+            return `https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${this.state}&redirect_uri=${process.env.REDIRECT_URL}`;
         }
     },
     methods: {
@@ -85,7 +85,7 @@ export default {
         if (code != undefined)
         {
             this.gettingToken = true;
-            axios.post(process.env.OAUTH_URL + '?code=' + code + '&state=' + this.state + '&env=' + process.env.NODE_ENV)
+            axios.post(`${process.env.OAUTH_URL}?code=${code}&state=${this.state}&env=${process.env.NODE_ENV}`)
                 .then((r) => { 
                     localStorage.token = r.data.access_token; 
                     this.apiRequester = new ApiRequester(localStorage.token, 'https://api.github.com');
