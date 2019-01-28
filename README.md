@@ -2,6 +2,8 @@
 
 > This is a full front-end application who simply rely on Github API. You can see it at [gitgraph.wellsguillaume.fr](https://gitgraph.wellsguillaume.fr).
 
+![screenshot of Single Page Application](gitgraph.png)
+
 ## Installation
 
 * `npm install`

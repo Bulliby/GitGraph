@@ -101,9 +101,6 @@ export default {
                     console.log("The access token can't be requested") 
                 });
         }
-        else
-            this.$router.push("/");
-
     }
 }
 </script>
