@@ -9,7 +9,7 @@
                     The app can't get stats from your github account.
                 </v-alert>
                 <button @click="logout()"><v-icon>exit_to_app</v-icon>Log out</button>
-                <dataTable v-if="name" :name="name" v-on:dataFetchingFailed="onDataFetchingFailed"></dataTable>
+                <dataTable :name="name" v-on:dataFetchingFailed="onDataFetchingFailed"></dataTable>
             </v-content>
         </div>
         <div v-else>
@@ -64,8 +64,7 @@ export default {
             location.assign(this.getLink);
         },
         getToken: function () {
-            if (localStorage.token == '' || localStorage.token == undefined 
-                || localStorage.name == '' || localStorage.name == undefined)
+            if (localStorage.token == undefined || localStorage.name == undefined)
                 return false;
             return true;
         },

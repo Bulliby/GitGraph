@@ -52,6 +52,7 @@ export default {
         user : {
             query: REPOSITORIES,
             variables() {
+                //The return permit to pass reactive variable to apollo.
                 return {
                     login: this.name
                 }
@@ -71,6 +72,7 @@ export default {
         getViews: function(repo) {
             return this.apiRequester.getViews(repo);
         },
+        //Genreate tab with axios pormises to execute in Promise.all().
         getAxiosPromises: function(repos) {
             for (let repo of repos)
             {
