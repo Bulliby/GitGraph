@@ -5,6 +5,7 @@
             <a :href="seeRepo(props.item)" target="_blank" class="link"><td>{{ props.item.name }}</td></a>
             <td>{{ props.item.clone }}</td>
             <td>{{ props.item.view }}</td>
+            <td>{{ props.item.stars }}</td>
         </template>
     </v-data-table>
 </template>
@@ -33,11 +34,13 @@ export default {
             clones: [],
             names: [],
             views: [],
+            stars: [],
             load: false,
             headers: [
                 { text: 'Names', value: 'name' },
                 { text: 'Unique clones', value: 'clone' },
-                { text: 'Unique views', value: 'view' }
+                { text: 'Unique views', value: 'view' },
+                { text: 'Stargazers', value: 'stars' }
             ],
             pagination: {
                 rowsPerPage: 7
@@ -58,6 +61,7 @@ export default {
                 }
             },
             result ({ data, loading, networkStatus }) {
+                //TODO rename
                 this.getAxiosPromises(data.user.repositories.nodes);
             },
             error(error) {
@@ -79,6 +83,7 @@ export default {
                 this.clones.push(this.getClones(repo.name));
                 this.views.push(this.getViews(repo.name));
                 this.names.push(repo.name);
+                this.stars.push(repo.stargazers.nodes.length);
             }
             this.getReposStats();
         },
@@ -107,6 +112,7 @@ export default {
                     stats.name = this.names[repo];
                     stats.clone = this.clones[repo].data.uniques;
                     stats.view = this.views[repo].data.uniques;
+                    stats.stars = this.stars[repo];
                     this.reposInfos.push(stats);
                 }
 

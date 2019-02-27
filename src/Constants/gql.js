@@ -5,7 +5,12 @@ export const REPOSITORIES = gql`query user($login: String!) {
     {
         repositories(first:100){
             nodes {
-                name
+                name,
+                stargazers(first:100) {
+                    nodes {
+                        name
+                    }
+                }
             }
         }
     }
