@@ -1,3 +1,16 @@
+// ************************************************************************** //
+//                                                                            //
+//                                                                            //
+//   ApiRequester.js                                                          //
+//                                                        ________            //
+//   By: bulliby <wellsguillaume+at+gmail.com>           /   ____/_  _  __    //
+//                                                      /    \  _\ \/ \/ /    //
+//   Created: 2019/03/10 19:10:46 by bulliby            \     \_\ \     /     //
+//   Updated: 2019/03/10 19:16:32 by bulliby             \________/\/\_/      //
+//                                                                            //
+// ************************************************************************** //
+
+
 import axios from 'axios';
 
 export default class ApiRequester {
@@ -22,5 +35,9 @@ export default class ApiRequester {
 
     getViews(reponame) {
         return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/views`);
+    }
+
+    getReferrers(reponame) {
+        return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/popular/referrers`);
     }
 }

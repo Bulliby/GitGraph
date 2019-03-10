@@ -1,11 +1,10 @@
 <template>
     <v-data-table :headers="headers" :pagination.sync="pagination" :items="reposInfos" :loading="load" class="elevation-1">
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
-        <template slot="items" slot-scope="props"> 
-            <a :href="seeRepo(props.item)" target="_blank" class="link"><td>{{ props.item.name }}</td></a>
-            <td>{{ props.item.clone }}</td>
-            <td>{{ props.item.view }}</td>
-            <td>{{ props.item.stars }}</td>
+        <template v-slot:items="props"> 
+                <a :href="seeRepo(props.item)" target="_blank" class="link"><td>{{ props.item.name }}</td></a>
+                <td>{{ props.item.clone }}</td>
+                <td>{{ props.item.view }}</td>
         </template>
     </v-data-table>
 </template>
@@ -35,12 +34,12 @@ export default {
             names: [],
             views: [],
             stars: [],
+            referrers: [],
             load: false,
             headers: [
                 { text: 'Names', value: 'name' },
                 { text: 'Unique clones', value: 'clone' },
                 { text: 'Unique views', value: 'view' },
-                { text: 'Stargazers', value: 'stars' }
             ],
             pagination: {
                 rowsPerPage: 7
@@ -70,54 +69,75 @@ export default {
         },
     },
     methods: {
+        /**
+         * Get promises from apiRequester
+         */
         getClones : function (repo) {
             return this.apiRequester.getClones(repo);
         },
         getViews: function(repo) {
             return this.apiRequester.getViews(repo);
         },
-        //Genreate tab with axios pormises to execute in Promise.all().
+        getReferrers: function(repo) {
+            return this.apiRequester.getReferrers(repo);
+        },
+
+        /**
+         * Genreate tab with axios pormises to execute with Promise.all() in 
+         * getReposStats().
+         */
         getAxiosPromises: function(repos) {
-            for (let repo of repos)
-            {
-                this.clones.push(this.getClones(repo.name));
-                this.views.push(this.getViews(repo.name));
-                this.names.push(repo.name);
-                this.stars.push(repo.stargazers.nodes.length);
-            }
+            //for (let repo of repos)
+            //{
+                this.clones.push(this.getClones(repos[1].name));
+                this.views.push(this.getViews(repos[1].name));
+                this.referrers.push(this.getReferrers(repos[1].name));
+                this.names.push(repos[1].name);
+                this.stars.push(repos[1].stargazers.nodes.length);
+                this.clones.push(this.getClones(repos[2].name));
+                this.views.push(this.getViews(repos[2].name));
+                this.referrers.push(this.getReferrers(repos[2].name));
+                this.names.push(repos[2].name);
+                this.stars.push(repos[2].stargazers.nodes.length);
+            //}
             this.getReposStats();
         },
         getReposStats: function () {
+
             this.load = true;
 
             Promise.all(this.clones).then((value) => { 
-
                 this.clones = value; 
                 return Promise.all(this.views).then((value) => { 
                     this.views = value 
-
+                    return Promise.all(this.referrers).then((value) => {
+                        this.referrers = value
+                    })
                 })
             }).finally(() => {
 
-                //this.clones.pop();
                 if (this.clones.length != this.views.length)
-                    //Number line doesn't works on chrome and not on firefox ^^
-                    throw new Error("There is disparity between views and clones array lenth", 'DataTable.vue', Number(75));
-
+                    //Number line Error Object doesn't works on chrome and not on firefox ^^
+                    throw new Error(
+                        "There is disparity between views and clones array lenth", 
+                        'DataTable.vue', 
+                        Number(75)
+                    );
                 for (let repo = 0; repo != this.clones.length; repo++)
                 {
                     this.load = false
 
                     let stats = {};
+                    let uniqueReferrer = [];
                     stats.name = this.names[repo];
                     stats.clone = this.clones[repo].data.uniques;
                     stats.view = this.views[repo].data.uniques;
+                    stats.referrers = this.referrers[repo].data;
                     stats.stars = this.stars[repo];
                     this.reposInfos.push(stats);
                 }
 
             }).catch((error) => { 
-
                 this.load = false; 
                 this.$emit('dataFetchingFailed');
                 throw new Error(error);
