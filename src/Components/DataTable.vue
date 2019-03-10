@@ -4,7 +4,12 @@
         <template v-slot:items="props"> 
                 <a :href="seeRepo(props.item)" target="_blank" class="link"><td>{{ props.item.name }}</td></a>
                 <td>{{ props.item.clone }}</td>
-                <td>{{ props.item.view }}</td>
+                <v-tooltip :disabled="props.item.referrers.length == 0" bottom>
+                    <template v-slot:activator="{ on }">
+                        <td v-on="on">{{ props.item.view }}</td>
+                    </template>
+                    <div class="toto" v-for="referrer in props.item.referrers">{{ referrer }}</div>
+                </v-tooltip>
         </template>
     </v-data-table>
 </template>
@@ -87,19 +92,14 @@ export default {
          * getReposStats().
          */
         getAxiosPromises: function(repos) {
-            //for (let repo of repos)
-            //{
-                this.clones.push(this.getClones(repos[1].name));
-                this.views.push(this.getViews(repos[1].name));
-                this.referrers.push(this.getReferrers(repos[1].name));
-                this.names.push(repos[1].name);
-                this.stars.push(repos[1].stargazers.nodes.length);
-                this.clones.push(this.getClones(repos[2].name));
-                this.views.push(this.getViews(repos[2].name));
-                this.referrers.push(this.getReferrers(repos[2].name));
-                this.names.push(repos[2].name);
-                this.stars.push(repos[2].stargazers.nodes.length);
-            //}
+            for (let repo of repos)
+            {
+                this.clones.push(this.getClones(repo.name));
+                this.views.push(this.getViews(repo.name));
+                this.referrers.push(this.getReferrers(repo.name));
+                this.names.push(repo.name);
+                this.stars.push(repo.stargazers.nodes.length);
+            }
             this.getReposStats();
         },
         getReposStats: function () {
@@ -132,7 +132,7 @@ export default {
                     stats.name = this.names[repo];
                     stats.clone = this.clones[repo].data.uniques;
                     stats.view = this.views[repo].data.uniques;
-                    stats.referrers = this.referrers[repo].data;
+                    stats.referrers = this.referrers[repo].data.map(el => el.referrer);
                     stats.stars = this.stars[repo];
                     this.reposInfos.push(stats);
                 }
@@ -145,10 +145,10 @@ export default {
         },
         seeRepo: function(dataTableItem) {
             return `https://github.com/${localStorage.name}/${dataTableItem.name}`
-        }
+        },
     },
     computed: {
-    },
+    }
 }
 </script>
 
