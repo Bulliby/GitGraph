@@ -115,7 +115,6 @@ export default {
                     })
                 })
             }).finally(() => {
-
                 if (this.clones.length != this.views.length)
                     //Number line Error Object doesn't works on chrome and not on firefox ^^
                     throw new Error(
