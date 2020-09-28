@@ -6,26 +6,28 @@
 //   By: bulliby <wellsguillaume+at+gmail.com>           /   ____/_  _  __    //
 //                                                      /    \  _\ \/ \/ /    //
 //   Created: 2019/03/10 19:10:46 by bulliby            \     \_\ \     /     //
-//   Updated: 2020/07/14 15:07:13 by bulliby             \________/\/\_/      //
+//   Updated: 2020/09/28 20:56:44 by bulliby             \________/\/\_/      //
 //                                                                            //
 // ************************************************************************** //
 
 
 import axios from 'axios';
 
-export default class ApiRequester {
+const ApiRequesterLoader = Object.create(null);
 
-    constructor(token, baseUrl, name=null){
-        this.baseUrl = baseUrl;
-        this.token = token;
-        this.name = name;
+class ApiRequester {
+
+    constructor(url){
         this.axios = axios.create({
-            baseURL: this.baseUrl,
+            baseURL: url,
             headers: {
-                'Authorization' : 'token ' + this.token,
                 'Accept' : 'application/vnd.github.v3+json'
             }
         });
+    }
+
+    getAxios() {
+        return this.axios;
     }
 
     getUser(){
@@ -52,3 +54,9 @@ export default class ApiRequester {
         return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/popular/referrers`);
     }
 }
+
+ApiRequesterLoader.install = function (Vue, options) {
+        Vue.prototype.$apiRequester = new ApiRequester(options.url);
+}
+
+export default ApiRequesterLoader;

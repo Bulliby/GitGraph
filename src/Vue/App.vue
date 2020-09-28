@@ -33,7 +33,7 @@
 
 import dataTable from '../Components/DataTable.vue';
 import axios from 'axios';
-import ApiRequester from './ApiRequester.js';
+import ApiRequester from '../api/ApiRequester.js';
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 export default {
@@ -52,7 +52,6 @@ export default {
     },
     computed: {
         getLink() {
-            console.log(process.env.REDIRECT_URL);
             return `https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${this.state}&redirect_uri=${process.env.REDIRECT_URL}`;
         }
     },
@@ -84,21 +83,27 @@ export default {
         if (code != undefined)
         {
             this.gettingToken = true;
-            axios.post(`${process.env.OAUTH_URL}?code=${code}&state=${this.state}&env=${process.env.NODE_ENV}`)
+            axios.post(process.env.OAUTH_URL,
+                {
+                    code: code,
+                    state: this.state,
+                })
                 .then((r) => { 
-                    localStorage.token = r.data.access_token; 
-                    this.apiRequester = new ApiRequester(localStorage.token, 'https://api.github.com');
-                    this.apiRequester.getUser().then((r) => {
-                        localStorage.setItem('name', r.data.login);
-                        this.name = r.data.login;
-                    }).finally(() => {
-                        this.$router.push("/");
-                        this.gettingToken = false;
-                    });
-                }).catch((e) => { 
-                    this.$router.push("/");
+                    console.log(this.$apiRequester);
+                    this.$apiRequester.defaults.auth.token = r.data.access_token;
+                    return this.$apiRequester.getUser()
+                })
+                .then((r) => {
+                    this.$apiRequester.auth.name = r.data.login;
+                })
+                .catch((e) => { 
                     this.gettingToken = false;
+                    console.log(e);
                     console.log("The access token can't be requested") 
+                })
+                .finally(() => {
+                    //this.$router.push("/");
+                    this.gettingToken = false;
                 });
         }
     }

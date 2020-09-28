@@ -3,6 +3,7 @@ import App from './App.vue'
 import VueApollo from "vue-apollo"
 import Vuetify from 'vuetify'
 import router from './routing.js'
+import ApiRequester from '../api/ApiRequester'
 import { VueRouter } from './routing.js'
 
 import { ApolloClient } from 'apollo-client'
@@ -37,6 +38,7 @@ const apolloClient = new ApolloClient({
 Vue.use(VueApollo)
 Vue.use(Vuetify)
 Vue.use(VueRouter)
+Vue.use(ApiRequester, {url: 'https://api.github.com'})
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient,
