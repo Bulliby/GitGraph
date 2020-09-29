@@ -6,7 +6,7 @@
 //   By: bulliby <wellsguillaume+at+gmail.com>           /   ____/_  _  __    //
 //                                                      /    \  _\ \/ \/ /    //
 //   Created: 2019/03/10 19:10:46 by bulliby            \     \_\ \     /     //
-//   Updated: 2020/09/28 20:56:44 by bulliby             \________/\/\_/      //
+//   Updated: 2020/09/28 23:37:20 by bulliby             \________/\/\_/      //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,10 +18,15 @@ const ApiRequesterLoader = Object.create(null);
 class ApiRequester {
 
     constructor(url){
+        this.baseUrl = url,
         this.axios = axios.create({
             baseURL: url,
             headers: {
                 'Accept' : 'application/vnd.github.v3+json'
+            },
+            auth: {
+                username: '',
+                password: ''
             }
         });
     }

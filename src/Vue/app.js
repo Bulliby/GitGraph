@@ -17,7 +17,8 @@ const httpLink = new HttpLink({
 })
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('token');
+  const token = this.$apiRequester.axios.defaults.auth.password;
+    console.log(token);
 
   return {
     headers: {

@@ -47,7 +47,7 @@ export default {
             gettingToken: false,
             apiRequester: null,
             state: null,
-            name: localStorage.name
+            name: this.$apiRequester.axios.defaults.auth.username
         }
     },
     computed: {
@@ -62,50 +62,48 @@ export default {
         githubConnect: function () {
             location.assign(this.getLink);
         },
-        getToken: function () {
-            if (localStorage.token == undefined || localStorage.name == undefined)
-                return false;
-            return true;
-        },
         logout: function () {
-            localStorage.removeItem('token');
-            localStorage.removeItem('name');
+            delete this.$apiRequester.axios.defaults.auth.password;
+            delete this.$apiRequester.axios.defaults.auth.username;
             this.$forceUpdate();
         },
         getState () {
             return Math.random().toString(36);
         },
-
+        getToken: function () {
+            if (this.$apiRequester.axios.defaults.auth.password == undefined || this.$apiRequester.axios.defaults.auth.username == undefined)
+                return false;
+            return true;
+        },
     },
     created : function () {
         let code = this.$route.query.code;
-        this.state = this.getState();
-        if (code != undefined)
-        {
-            this.gettingToken = true;
-            axios.post(process.env.OAUTH_URL,
-                {
-                    code: code,
-                    state: this.state,
-                })
-                .then((r) => { 
-                    console.log(this.$apiRequester);
-                    this.$apiRequester.defaults.auth.token = r.data.access_token;
-                    return this.$apiRequester.getUser()
-                })
-                .then((r) => {
-                    this.$apiRequester.auth.name = r.data.login;
-                })
-                .catch((e) => { 
-                    this.gettingToken = false;
-                    console.log(e);
-                    console.log("The access token can't be requested") 
-                })
-                .finally(() => {
-                    //this.$router.push("/");
-                    this.gettingToken = false;
-                });
+
+        if (code == undefined) {
+            return;
         }
+
+        this.state = this.getState();
+        this.gettingToken = true;
+
+        axios.post(process.env.OAUTH_URL,
+            {
+                code: code,
+                state: this.state,
+            })
+            .then((r) => {
+                this.$apiRequester.axios.defaults.auth.password = r.data.access_token;
+                return this.$apiRequester.getUser()
+            })
+            .then((r) => {
+                this.$apiRequester.axios.defaults.auth.username = r.data.login;
+            })
+            .catch((e) => {
+                throw new Error(e);
+            })
+            .finally(() => {
+                this.gettingToken = false;
+            });
     }
 }
 </script>
