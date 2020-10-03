@@ -6,7 +6,7 @@
 //   By: bulliby <wellsguillaume+at+gmail.com>           /   ____/_  _  __    //
 //                                                      /    \  _\ \/ \/ /    //
 //   Created: 2019/03/10 19:10:46 by bulliby            \     \_\ \     /     //
-//   Updated: 2020/09/28 23:37:20 by bulliby             \________/\/\_/      //
+//   Updated: 2020/10/03 15:00:26 by bulliby             \________/\/\_/      //
 //                                                                            //
 // ************************************************************************** //
 
@@ -37,6 +37,10 @@ class ApiRequester {
 
     getUser(){
         return this.axios.get(`${this.baseUrl}/user`);
+    }
+
+    getRepositories() {
+        return this.axios.get(`${this.baseUrl}/user/repos?affiliation=owner&sort=updated`);
     }
 
     getClones(reponame) {

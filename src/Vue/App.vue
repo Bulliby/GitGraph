@@ -47,7 +47,8 @@ export default {
             gettingToken: false,
             apiRequester: null,
             state: null,
-            name: this.$apiRequester.axios.defaults.auth.username
+            name: this.$apiRequester.axios.defaults.auth.username,
+            repositories: null,
         }
     },
     computed: {
@@ -97,6 +98,10 @@ export default {
             })
             .then((r) => {
                 this.$apiRequester.axios.defaults.auth.username = r.data.login;
+            })
+            .then(() => this.$apiRequester.getRepositories()) 
+            .then((e) => {
+                this.repositories = e.data;   
             })
             .catch((e) => {
                 throw new Error(e);
