@@ -1,6 +1,6 @@
 <template>
     <v-app id="app">
-        <div v-if="getToken()">
+        <div v-if="connected()">
             <v-layout align-center justify-center>
                 <img src="../Assets/GitHub.jpg"/>
             </v-layout>
@@ -46,14 +46,8 @@ export default {
             error: false,
             gettingToken: false,
             apiRequester: null,
-            state: null,
             name: this.$apiRequester.axios.defaults.auth.username,
             repositories: null,
-        }
-    },
-    computed: {
-        getLink() {
-            return `https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${this.state}&redirect_uri=${process.env.REDIRECT_URL}`;
         }
     },
     methods: {
@@ -61,37 +55,36 @@ export default {
             this.error = true;
         },
         githubConnect: function () {
-            location.assign(this.getLink);
         },
         logout: function () {
-            delete this.$apiRequester.axios.defaults.auth.password;
-            delete this.$apiRequester.axios.defaults.auth.username;
-            this.$forceUpdate();
+            this.$apiRequester.axios.defaults.auth.password = '';
+            this.$apiRequester.axios.defaults.auth.username = '';
         },
-        getState () {
+        getState: function(){
             return Math.random().toString(36);
         },
-        getToken: function () {
-            if (this.$apiRequester.axios.defaults.auth.password == undefined || this.$apiRequester.axios.defaults.auth.username == undefined)
+        connected: function () {
+            if (
+                this.$apiRequester.axios.defaults.auth.password == '' 
+                || this.$apiRequester.axios.defaults.auth.username == ''
+            ) {
                 return false;
+            }
             return true;
         },
     },
     created : function () {
         let code = this.$route.query.code;
+        let state = this.$route.query.state;
 
         if (code == undefined) {
+            location.assign( `https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${Math.random().toString(36)}&redirect_uri=${process.env.REDIRECT_URL}`);
             return;
         }
 
-        this.state = this.getState();
         this.gettingToken = true;
 
-        axios.post(process.env.OAUTH_URL,
-            {
-                code: code,
-                state: this.state,
-            })
+        axios.post(process.env.OAUTH_URL, { code, state })
             .then((r) => {
                 this.$apiRequester.axios.defaults.auth.password = r.data.access_token;
                 return this.$apiRequester.getUser()

@@ -11,7 +11,6 @@ Vue.use(ApiRequester, {url: 'https://api.github.com'})
 
 const app = new Vue({
     el: '#app',
-    apolloProvider,
     render: h => h(App),
     router
 });
