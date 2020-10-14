@@ -52,29 +52,11 @@ export default {
         }
     },
     created: function() {
-    },
-    apollo: {
-        user : {
-            query: REPOSITORIES,
-            variables() {
-                //The return permit to pass reactive variable to apollo.
-                return {
-                    login: this.name
-                }
-            },
-            result ({ data, loading, networkStatus }) {
-                //TODO rename
-                this.getAxiosPromises(data.user.repositories.nodes);
-            },
-            error(error) {
-                this.$emit('dataFetchingFailed');
-            }
-        },
+        this.$apiRequester.getRepositories().then((response) => {
+            this.getAxiosPromises(response.data);
+        }); 
     },
     methods: {
-        /**
-         * Get promises from apiRequester
-         */
         getClones : function (repo) {
             return this.$apiRequester.getClones(repo);
         },
@@ -85,10 +67,6 @@ export default {
             return this.$apiRequester.getReferrers(repo);
         },
 
-        /**
-         * Genreate tab with axios pormises to execute with Promise.all() in 
-         * getReposStats().
-         */
         getAxiosPromises: function(repos) {
             for (let repo of repos)
             {
@@ -96,41 +74,36 @@ export default {
                 this.views.push(this.getViews(repo.name));
                 this.referrers.push(this.getReferrers(repo.name));
                 this.names.push(repo.name);
-                this.stars.push(repo.stargazers.nodes.length);
             }
+
             this.getReposStats();
         },
-        getReposStats: function () {
 
+        getReposStats: function () {
             this.load = true;
 
             Promise.all(this.clones).then((value) => { 
                 this.clones = value; 
-                return Promise.all(this.views).then((value) => { 
-                    this.views = value 
-                    return Promise.all(this.referrers).then((value) => {
-                        this.referrers = value
-                    })
-                })
+                return Promise.all(this.views);
+            }).then((value) => {
+                this.views = value; 
+                return Promise.all(this.referrers);
+            }).then((value) => {
+                this.referrers = value;
             }).finally(() => {
-                if (this.clones.length != this.views.length)
-                    //Number line Error Object doesn't works on chrome and not on firefox ^^
-                    throw new Error(
-                        "There is disparity between views and clones array lenth", 
-                        'DataTable.vue', 
-                        Number(75)
-                    );
-                for (let repo = 0; repo != this.clones.length; repo++)
-                {
+                if (this.clones.length != this.views.length) {
+                    throw new Error("There is disparity between views and clones array lenth"); 
+                }
+                for(const key in this.clones) {
                     this.load = false
 
                     let stats = {};
                     let uniqueReferrer = [];
-                    stats.name = this.names[repo];
-                    stats.clone = this.clones[repo].data.uniques;
-                    stats.view = this.views[repo].data.uniques;
-                    stats.referrers = this.referrers[repo].data.map(el => el.referrer);
-                    stats.stars = this.stars[repo];
+                    stats.name = this.names[key];
+                    stats.clone = this.clones[key].data.uniques;
+                    stats.view = this.views[key].data.uniques;
+                    stats.referrers = this.referrers[key].data.map(el => el.referrer);
+                    stats.stars = this.stars[key];
                     this.reposInfos.push(stats);
                 }
 
@@ -141,7 +114,7 @@ export default {
             });
         },
         seeRepo: function(dataTableItem) {
-            return `https://github.com/${localStorage.name}/${dataTableItem.name}`
+            return `https://github.com/${this.$apiRequester.username}/${dataTableItem.name}`
         },
     },
     computed: {

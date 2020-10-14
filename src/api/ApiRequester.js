@@ -6,7 +6,7 @@
 //   By: bulliby <wellsguillaume+at+gmail.com>           /   ____/_  _  __    //
 //                                                      /    \  _\ \/ \/ /    //
 //   Created: 2019/03/10 19:10:46 by bulliby            \     \_\ \     /     //
-//   Updated: 2020/10/03 15:00:26 by bulliby             \________/\/\_/      //
+//   Updated: 2020/10/14 20:27:44 by bulliby             \________/\/\_/      //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,6 +31,11 @@ class ApiRequester {
         });
     }
 
+    setUserName(name)
+    {
+        this.username = name;
+    }
+
     getAxios() {
         return this.axios;
     }
@@ -44,7 +49,7 @@ class ApiRequester {
     }
 
     getClones(reponame) {
-        return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/clones`,  {
+        return this.axios.get(`${this.baseUrl}/repos/${this.username}/${reponame}/traffic/clones`,  {
             params: {
                 per: 'week',
             }
@@ -52,7 +57,7 @@ class ApiRequester {
     }
 
     getViews(reponame) {
-        return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/views`, {
+        return this.axios.get(`${this.baseUrl}/repos/${this.username}/${reponame}/traffic/views`, {
             params: {
                 per: 'week',
             }
@@ -60,7 +65,7 @@ class ApiRequester {
     }
 
     getReferrers(reponame) {
-        return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/popular/referrers`);
+        return this.axios.get(`${this.baseUrl}/repos/${this.username}/${reponame}/traffic/popular/referrers`);
     }
 }
 

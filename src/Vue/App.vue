@@ -55,6 +55,7 @@ export default {
             this.error = true;
         },
         githubConnect: function () {
+            location.assign( `https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${Math.random().toString(36)}&redirect_uri=${process.env.REDIRECT_URL}`);
         },
         logout: function () {
             this.$apiRequester.axios.defaults.auth.password = '';
@@ -78,7 +79,6 @@ export default {
         let state = this.$route.query.state;
 
         if (code == undefined) {
-            location.assign( `https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${Math.random().toString(36)}&redirect_uri=${process.env.REDIRECT_URL}`);
             return;
         }
 
@@ -91,6 +91,7 @@ export default {
             })
             .then((r) => {
                 this.$apiRequester.axios.defaults.auth.username = r.data.login;
+                this.$apiRequester.setUserName(r.data.login);
             })
             .then(() => this.$apiRequester.getRepositories()) 
             .then((e) => {
