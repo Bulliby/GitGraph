@@ -17,7 +17,6 @@
 <script>
 
 import axios from 'axios';
-import { REPOSITORIES } from '../Constants/gql.js';
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
@@ -114,7 +113,7 @@ export default {
             });
         },
         seeRepo: function(dataTableItem) {
-            return `https://github.com/${this.$apiRequester.username}/${dataTableItem.name}`
+            return `https://github.com/${this.$apiRequester.name}/${dataTableItem.name}`
         },
     },
     computed: {

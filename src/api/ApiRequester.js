@@ -6,34 +6,43 @@
 //   By: bulliby <wellsguillaume+at+gmail.com>           /   ____/_  _  __    //
 //                                                      /    \  _\ \/ \/ /    //
 //   Created: 2019/03/10 19:10:46 by bulliby            \     \_\ \     /     //
-//   Updated: 2020/10/14 20:27:44 by bulliby             \________/\/\_/      //
+//   Updated: 2020/10/17 23:51:04 by bulliby             \________/\/\_/      //
 //                                                                            //
 // ************************************************************************** //
 
 
 import axios from 'axios';
+import { Cookies } from '../Vue/Cookies';
 
 const ApiRequesterLoader = Object.create(null);
 
 class ApiRequester {
 
     constructor(url){
-        this.baseUrl = url,
+        this.baseUrl = url;
+        this.cookies = new Cookies();
+        this.name = this.cookies.getCookie('name') || '';
+        this.oauth = this.cookies.getCookie('oauth') || '';
         this.axios = axios.create({
             baseURL: url,
             headers: {
                 'Accept' : 'application/vnd.github.v3+json'
             },
             auth: {
-                username: '',
-                password: ''
+                username: this.name,
+                password: this.oauth,
             }
         });
     }
 
-    setUserName(name)
-    {
-        this.username = name;
+    setName(name) {
+        this.axios.defaults.auth.username = name;
+        this.name = name;
+    }
+
+    setToken(oauth){
+        this.axios.defaults.auth.password = oauth;
+        this.oauth = oauth;
     }
 
     getAxios() {
@@ -49,7 +58,7 @@ class ApiRequester {
     }
 
     getClones(reponame) {
-        return this.axios.get(`${this.baseUrl}/repos/${this.username}/${reponame}/traffic/clones`,  {
+        return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/clones`,  {
             params: {
                 per: 'week',
             }
@@ -57,7 +66,7 @@ class ApiRequester {
     }
 
     getViews(reponame) {
-        return this.axios.get(`${this.baseUrl}/repos/${this.username}/${reponame}/traffic/views`, {
+        return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/views`, {
             params: {
                 per: 'week',
             }
@@ -65,7 +74,7 @@ class ApiRequester {
     }
 
     getReferrers(reponame) {
-        return this.axios.get(`${this.baseUrl}/repos/${this.username}/${reponame}/traffic/popular/referrers`);
+        return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/popular/referrers`);
     }
 }
 

@@ -55,20 +55,17 @@ export default {
             this.error = true;
         },
         githubConnect: function () {
-            location.assign( `https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${Math.random().toString(36)}&redirect_uri=${process.env.REDIRECT_URL}`);
+            location.assign(`https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${Math.random().toString(36)}&redirect_uri=${process.env.REDIRECT_URL}`);
         },
         logout: function () {
-            this.$apiRequester.axios.defaults.auth.password = '';
-            this.$apiRequester.axios.defaults.auth.username = '';
+            this.$cookies.setCookie('oauth', '', 0)
+            this.$cookies.setCookie('name', '', 0)
         },
         getState: function(){
             return Math.random().toString(36);
         },
         connected: function () {
-            if (
-                this.$apiRequester.axios.defaults.auth.password == '' 
-                || this.$apiRequester.axios.defaults.auth.username == ''
-            ) {
+            if (this.$cookies.getCookie('oauth') == undefined) {
                 return false;
             }
             return true;
@@ -78,31 +75,29 @@ export default {
         let code = this.$route.query.code;
         let state = this.$route.query.state;
 
-        if (code == undefined) {
+        if (code == undefined || this.connected()) {
             return;
         }
 
         this.gettingToken = true;
-
-        axios.post(process.env.OAUTH_URL, { code, state })
-            .then((r) => {
-                this.$apiRequester.axios.defaults.auth.password = r.data.access_token;
-                return this.$apiRequester.getUser()
-            })
-            .then((r) => {
-                this.$apiRequester.axios.defaults.auth.username = r.data.login;
-                this.$apiRequester.setUserName(r.data.login);
-            })
-            .then(() => this.$apiRequester.getRepositories()) 
-            .then((e) => {
-                this.repositories = e.data;   
-            })
-            .catch((e) => {
-                throw new Error(e);
-            })
-            .finally(() => {
-                this.gettingToken = false;
-            });
+        axios.post(process.env.OAUTH_URL, { code, state }, {withCredentials: true})
+        .then((r) => {
+            this.$cookies.parseCookies();
+            console.log(this.$cookies.getCookie('name'));
+            console.log(this.$cookies.getCookie('oauth'));
+            this.$apiRequester.setName(this.$cookies.getCookie('name'));
+            this.$apiRequester.setToken(this.$cookies.getCookie('oauth'));
+            return this.$apiRequester.getRepositories()
+        })
+        .then((e) => {
+            this.repositories = e.data;
+        })
+        .catch((e) => {
+            throw new Error(e);
+        })
+        .finally(() => {
+            this.gettingToken = false;
+        });
     }
 }
 </script>
