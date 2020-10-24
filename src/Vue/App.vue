@@ -58,8 +58,10 @@ export default {
             location.assign(`https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${Math.random().toString(36)}&redirect_uri=${process.env.REDIRECT_URL}`);
         },
         logout: function () {
-            this.$cookies.setCookie('oauth', '', 0)
-            this.$cookies.setCookie('name', '', 0)
+            this.$cookies.eraseCookie('oauth', '', 'gitgraph.com');
+            this.$cookies.eraseCookie('name', '', 'gitgraph.com');
+            this.$router.push("/");
+            this.$router.go("/");
         },
         getState: function(){
             return Math.random().toString(36);
@@ -83,8 +85,6 @@ export default {
         axios.post(process.env.OAUTH_URL, { code, state }, {withCredentials: true})
         .then((r) => {
             this.$cookies.parseCookies();
-            console.log(this.$cookies.getCookie('name'));
-            console.log(this.$cookies.getCookie('oauth'));
             this.$apiRequester.setName(this.$cookies.getCookie('name'));
             this.$apiRequester.setToken(this.$cookies.getCookie('oauth'));
             return this.$apiRequester.getRepositories()
