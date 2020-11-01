@@ -58,8 +58,9 @@ export default {
             location.assign(`https://github.com/login/oauth/authorize?connection=github&scope=public_repo&response_type=code&client_id=${process.env.CLIENT_ID}&state=${Math.random().toString(36)}&redirect_uri=${process.env.REDIRECT_URL}`);
         },
         logout: function () {
-            this.$cookies.eraseCookie('oauth', '', 'gitgraph.com');
-            this.$cookies.eraseCookie('name', '', 'gitgraph.com');
+            //TODO configure
+            this.$cookies.eraseCookie('oauth', '', 'gitgraph.wellsguillaume.fr');
+            this.$cookies.eraseCookie('name', '', 'gitgraph.wellsguillaume.fr');
             this.$router.push("/");
             this.$router.go("/");
         },
