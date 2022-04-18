@@ -6,7 +6,7 @@
 //   By: bulliby <wellsguillaume+at+gmail.com>           /   ____/_  _  __    //
 //                                                      /    \  _\ \/ \/ /    //
 //   Created: 2019/03/10 19:10:46 by bulliby            \     \_\ \     /     //
-//   Updated: 2020/10/17 23:51:04 by bulliby             \________/\/\_/      //
+//   Updated: 2022/04/16 14:21:54 by waxer               \________/\/\_/      //
 //                                                                            //
 // ************************************************************************** //
 
@@ -60,7 +60,7 @@ class ApiRequester {
     getClones(reponame) {
         return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/clones`,  {
             params: {
-                per: 'week',
+                per: 'day',
             }
         });
     }
@@ -68,7 +68,7 @@ class ApiRequester {
     getViews(reponame) {
         return this.axios.get(`${this.baseUrl}/repos/${this.name}/${reponame}/traffic/views`, {
             params: {
-                per: 'week',
+                per: 'day',
             }
         });
     }

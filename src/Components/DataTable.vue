@@ -1,17 +1,25 @@
 <template>
-    <v-data-table :headers="headers" :pagination.sync="pagination" :items="reposInfos" :loading="load" class="elevation-1">
-        <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
-        <template v-slot:items="props"> 
-                <a :href="seeRepo(props.item)" target="_blank" class="link"><td>{{ props.item.name }}</td></a>
-                <td>{{ props.item.clone }}</td>
-                <v-tooltip :disabled="props.item.referrers.length == 0" bottom>
-                    <template v-slot:activator="{ on }">
-                        <td v-on="on">{{ props.item.view }}</td>
-                    </template>
-                    <div class="toto" v-for="referrer in props.item.referrers">{{ referrer }}</div>
-                </v-tooltip>
-        </template>
-    </v-data-table>
+    <div>
+        <v-data-table :headers="headers" :pagination.sync="pagination" :items="reposInfos2" :loading="load" class="elevation-1">
+            <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+            <template v-slot:items="props"> 
+                    <a :href="seeRepo(props.item)" target="_blank" class="link"><td>{{ props.item.name }}</td></a>
+                    <td>{{ props.item.clone }}</td>
+                    <v-tooltip :disabled="props.item.referrers.length == 0" bottom>
+                        <template v-slot:activator="{ on }">
+                            <td v-on="on">{{ props.item.view }}</td>
+                        </template>
+                        <div class="toto" v-for="referrer in props.item.referrers">{{ referrer }}</div>
+                    </v-tooltip>
+            </template>
+        </v-data-table>
+        <v-date-picker
+            v-model="date"
+            @input="getByDate()"
+            :min=dateMin
+            :max=dateMax
+        ></v-date-picker>
+    </div>
 </template>
 
 <script>
@@ -33,6 +41,7 @@ export default {
     data () {
         return {
             reposInfos: [],
+            reposInfos2: [],
             clones: [],
             names: [],
             views: [],
@@ -47,10 +56,18 @@ export default {
             pagination: {
                 rowsPerPage: 7
             },
-            apiRequester: null
+            apiRequester: null,
+            min: null,
+            max: null,
+            date: null,
         }
     },
     created: function() {
+        this.min = new Date();
+        this.max = new Date();
+        this.date = new Date();
+        this.date.setDate(this.date.getDate() - 1);
+        this.date = this.date.toISOString().split('T')[0];
         this.$apiRequester.getRepositories().then((response) => {
             this.getAxiosPromises(response.data);
         }); 
@@ -64,6 +81,47 @@ export default {
         },
         getReferrers: function(repo) {
             return this.$apiRequester.getReferrers(repo);
+        },
+
+        getByDate: function() {
+            this.reposInfos2 = [];
+            for(const key in this.reposInfos) {
+                let stats = {};
+                let repoInfos = this.reposInfos[key];
+                if (repoInfos.clone.length) {
+                    let clones = this.filterByDate(repoInfos.clone);
+                    if (clones.length) {
+                        stats.clone = clones[0].uniques;
+                    } else {
+                        stats.clone = 0;
+                    }
+                } else {
+                    stats.clone = 0;
+                }
+                if (repoInfos.view.length) {
+                    let views = this.filterByDate(repoInfos.view);
+                    if (views.length) {
+                        stats.view = views[0].uniques;
+                    } else {
+                        stats.view = 0;
+                    }
+                } else {
+                    stats.view = 0;
+                }
+                stats.referrers = repoInfos.referrers;
+                stats.name = repoInfos.name;
+                this.reposInfos2.push(stats);
+            }
+
+            console.log(this.reposInfos2);
+            console.log(this.reposInfos);
+        },
+
+        filterByDate: function(stats) {
+            return stats.filter((el) => {
+                let dateEl = el.timestamp.split('T')[0];
+                return dateEl == this.date;
+            });
         },
 
         getAxiosPromises: function(repos) {
@@ -90,22 +148,17 @@ export default {
             }).then((value) => {
                 this.referrers = value;
             }).finally(() => {
-                if (this.clones.length != this.views.length) {
-                    throw new Error("There is disparity between views and clones array lenth"); 
-                }
                 for(const key in this.clones) {
                     this.load = false
-
-                    let stats = {};
                     let uniqueReferrer = [];
+                    let stats = {};
                     stats.name = this.names[key];
-                    stats.clone = this.clones[key].data.uniques;
-                    stats.view = this.views[key].data.uniques;
+                    stats.clone = this.clones[key].data.clones;
+                    stats.view = this.views[key].data.views;
                     stats.referrers = this.referrers[key].data.map(el => el.referrer);
-                    stats.stars = this.stars[key];
                     this.reposInfos.push(stats);
                 }
-
+               this.getByDate();
             }).catch((error) => { 
                 this.load = false; 
                 this.$emit('dataFetchingFailed');
@@ -117,6 +170,14 @@ export default {
         },
     },
     computed: {
+        dateMax() {
+            this.max.setDate(this.max.getDate() - 1);
+            return this.max.toISOString().split('T')[0];
+        },
+        dateMin() {
+            this.min.setDate(this.min.getDate() - 15);
+            return this.min.toISOString().split('T')[0];
+        }
     }
 }
 </script>
