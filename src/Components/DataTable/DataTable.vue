@@ -6,15 +6,15 @@
                 </div>
             </div>
             <div class="datatable">
-                <div class="data-row" v-for="repo in getRepositories">
+                <div class="data-row" v-for="(repoStat in reposStats">
                     <div class="column  name">
-                        {{ repo }}
+                        {{ repoStat.stats.name }}
                     </div>
                     <div class="column  clones">
-                     
+                        {{ repoStat.stats.clones }}
                     </div>
                     <div class="column  views">
-                     
+                        {{ repoStat.stats.views }}
                     </div>
                 </div>
             </div>
@@ -22,6 +22,8 @@
 </template>
 
 <script>
+
+import { RepoStats } from '../../Vue/Stats.js'
 
 export default {
     name: 'DataTable',
@@ -34,15 +36,48 @@ export default {
                 { text: 'Unique clones', value: 'clone' },
                 { text: 'Unique views', value: 'view' },
             ],
+            reposStats: [],
+            reposNames: [],
+        }
+    },
+    mounted: function () {
+        this.$apiRequester.getRepositories().then((repos) => {
+            repos.data.filter((repo) => {
+                //return repo.name == 'libft' || repo.name == 'shell.py';
+                return true;
+            }).map((repo) => {
+                let name = repo.name;
+                return this.$stats.getRepoStats(name).then((response) => {
+                    let clones, views, referrer = null;
+                    [ clones, views, referrer] = response;
+
+                    clones = this.$stats.dateFilter(clones, 'clones', new Date());
+                    views = this.$stats.dateFilter(views, 'views', new Date());
+
+                    let stats = new RepoStats(name, clones, views, referrer)
+                    this.reposStats.push(stats);
+                });
+            });
+        });
+    },
+    methods: {
+        getStatsForView: function(repoName) {
+            return this.$stats.getRepoStats(repoName).then((response) => { 
+
+                let clones, views, referrer = null;
+                [ clones, views, referrer] = response;
+
+                clones = this.$stats.dateFilter(clones, 'clones', new Date());
+                views = this.$stats.dateFilter(views, 'views', new Date());
+
+                let stats = new RepoStats(repoName, clones, views, referrer)
+                this.reposStats.push(stats);
+                return stats;
+            });
         }
     },
     computed: {
-        getRepositories() {
-            return this.$apiRequester.getRepositories();
-        }
-    },
-    methods: {
-    },
+    }
 
 }
 
@@ -82,6 +117,10 @@ export default {
     text-align: center;
     vertical-align: middle;
     line-height: 40px;
+}
+
+.column.name {
+    text-align: start;
 }
 
 .datatable {

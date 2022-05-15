@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Refacto from './Refacto.vue'
-import StatsLoader from './Stats.js'
+import { StatsLoader } from './Stats.js'
 import { ApiRequesterLoader } from '../api/ApiRequester.js'
 
 Vue.use(StatsLoader);
