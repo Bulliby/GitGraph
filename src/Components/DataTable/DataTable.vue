@@ -6,9 +6,15 @@
                 </div>
             </div>
             <div class="datatable">
-                <div class="data-row" v-for="x in 20">
-                    <div class="column" v-for="y in 3">
-                        TOFO
+                <div class="data-row" v-for="repo in getRepositories">
+                    <div class="column  name">
+                        {{ repo }}
+                    </div>
+                    <div class="column  clones">
+                     
+                    </div>
+                    <div class="column  views">
+                     
                     </div>
                 </div>
             </div>
@@ -31,9 +37,13 @@ export default {
         }
     },
     computed: {
+        getRepositories() {
+            return this.$apiRequester.getRepositories();
+        }
     },
     methods: {
-    }
+    },
+
 }
 
 </script>
