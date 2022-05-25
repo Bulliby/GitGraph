@@ -32,11 +32,13 @@ export default {
             if (this.days > 1) {
                 this.days -= 1;
             } 
+            this.$emit('days', this.days);
         },
         decrement: function () {
             if (this.days < 14) {
                 this.days += 1;
             } 
+            this.$emit('days', this.days);
         }
 
     }

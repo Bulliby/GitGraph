@@ -1,5 +1,6 @@
 <template>
         <div class="table">
+            {{ days }}
             <div class="headers">
                 <div v-for="(header, index) of headers" class="header">
                     {{ header.value }}
@@ -23,11 +24,14 @@
 
 <script>
 
-import { RepoStats } from '../../Vue/Stats.js'
+import { RawStats, RepoStats } from '../../Vue/Stats.js'
 
 export default {
     name: 'DataTable',
     components: { 
+    },
+    props: {
+        days: Number
     },
     data () {
         return {
@@ -37,48 +41,63 @@ export default {
                 { text: 'Unique views', value: 'view' },
             ],
             reposStats: [],
+            rawStats: [],
             reposNames: [],
+            allStats: [],
+            currentDate: new Date(),
         }
     },
     mounted: function () {
-        this.$apiRequester.getRepositories().then((repos) => {
-            repos.data.filter((repo) => {
-                //return repo.name == 'libft' || repo.name == 'shell.py';
-                return true;
-            }).map((repo) => {
-                let name = repo.name;
-                return this.$stats.getRepoStats(name).then((response) => {
-                    let clones, views, referrer = null;
-                    [ clones, views, referrer] = response;
-
-                    clones = this.$stats.dateFilter(clones, 'clones', new Date());
-                    views = this.$stats.dateFilter(views, 'views', new Date());
-
-                    let stats = new RepoStats(name, clones, views, referrer)
-                    this.reposStats.push(stats);
-                });
-            });
+        this.getStats().then(this.filterStatsByDay).then(() => {
         });
     },
     methods: {
-        getStatsForView: function(repoName) {
-            return this.$stats.getRepoStats(repoName).then((response) => { 
-
-                let clones, views, referrer = null;
-                [ clones, views, referrer] = response;
-
-                clones = this.$stats.dateFilter(clones, 'clones', new Date());
-                views = this.$stats.dateFilter(views, 'views', new Date());
-
-                let stats = new RepoStats(repoName, clones, views, referrer)
-                this.reposStats.push(stats);
-                return stats;
+        getStats: function() {
+            let stats = [];
+            let names = [];
+            return this.$apiRequester.getRepositories().then((repos) => {
+                repos.data.filter((repo) => {
+                    return true;
+                }).map((repo) => {
+                    let name = repo.name;
+                    stats.push(this.$stats.getRepoStats(name));
+                    names.push(repo.name);
+                })
+            }).then(() => {
+                return Promise.all(stats).then((repos) => {
+                    repos.map((repo, i) => {
+                        let clones, views, referrer = null;
+                        [ clones, views, referrer ] = repo;
+                        let stat = new RawStats(names[i], clones, views, referrer)
+                        this.rawStats.push(stat);
+                    });
+                });
             });
-        }
+        },
+        filterStatsByDay: function() {
+            this.reposStats = [];
+            this.rawStats.map((repo) => {
+                let clones, views, referrer;
+                clones = this.$stats.dateFilter(repo.stats.clones, 'clones', this.currentDate);
+                views = this.$stats.dateFilter(repo.stats.views, 'views', this.currentDate);
+                let stat = new RepoStats(repo.stats.name, clones, views, referrer)
+                this.reposStats.push(stat);
+            });
+        },
     },
     computed: {
+    },
+    watch: { 
+        days: function(newVal, oldVal) {
+            if (oldVal < newVal) {
+                this.currentDate.setDate(this.currentDate.getDate() - 1);
+                this.filterStatsByDay();
+            } else {
+                this.currentDate.setDate(this.currentDate.getDate() + 1);
+                this.filterStatsByDay();
+            }
+        }
     }
-
 }
 
 </script>
