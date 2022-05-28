@@ -1,9 +1,10 @@
 <template>
         <div class="table">
-            {{ days }}
             <div class="headers">
                 <div v-for="(header, index) of headers" class="header">
-                    {{ header.value }}
+                    <Columns>
+                        {{ header.value }}
+                    </Columns>
                 </div>
             </div>
             <div class="datatable">
@@ -25,10 +26,12 @@
 <script>
 
 import { RawStats, RepoStats } from '../../Vue/Stats.js'
+import Columns from './Components/Columns/Columns.vue'
 
 export default {
     name: 'DataTable',
     components: { 
+        Columns,
     },
     props: {
         days: Number
@@ -42,28 +45,25 @@ export default {
             ],
             reposStats: [],
             rawStats: [],
-            reposNames: [],
-            allStats: [],
             currentDate: new Date(),
         }
     },
     mounted: function () {
-        this.getStats().then(this.filterStatsByDay).then(() => {
-        });
+        //this.getStats().then(this.filterStatsByDay);
     },
     methods: {
         getStats: function() {
             let stats = [];
             let names = [];
-            return this.$apiRequester.getRepositories().then((repos) => {
+            return this.$apiRequester.getRepositories().then(repos => {
                 repos.data.filter((repo) => {
                     return true;
                 }).map((repo) => {
                     let name = repo.name;
                     stats.push(this.$stats.getRepoStats(name));
                     names.push(repo.name);
-                })
-            }).then(() => {
+                }); 
+
                 return Promise.all(stats).then((repos) => {
                     repos.map((repo, i) => {
                         let clones, views, referrer = null;
@@ -73,14 +73,16 @@ export default {
                     });
                 });
             });
+
         },
         filterStatsByDay: function() {
             this.reposStats = [];
             this.rawStats.map((repo) => {
-                let clones, views, referrer;
-                clones = this.$stats.dateFilter(repo.stats.clones, 'clones', this.currentDate);
-                views = this.$stats.dateFilter(repo.stats.views, 'views', this.currentDate);
-                let stat = new RepoStats(repo.stats.name, clones, views, referrer)
+                let stat = new RepoStats(
+                    repo.stats.name, 
+                    this.$stats.dateFilter(repo.stats.clones, 'clones', this.currentDate),
+                    this.$stats.dateFilter(repo.stats.views, 'views', this.currentDate), 
+                    repo.stats.referrer)
                 this.reposStats.push(stat);
             });
         },
@@ -111,9 +113,8 @@ export default {
 .header {
     width: calc(100% / 3);
     font-weight: 700;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 50px;
+    display: flex;
+    justify-content: center;
 }
 
 .headers {
