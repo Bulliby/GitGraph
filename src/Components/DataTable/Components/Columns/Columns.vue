@@ -1,14 +1,13 @@
 <template>
-        <div class="column-name">
-            <slot></slot><div class="carret">⌃</div>
+        <div class="column-name" @click="changeState()">
+            <div class="text"><slot></slot></div>
+            <div class="carret" :class="align">{{ sortStatus }}</div>
         </div>
-        <!-- <img class="sort-icon" @click="changeState" :src="selectImage" alt="Arrow oriented to the top"></img> -->
 </template>
 
 <script>
 
-import UpArrow from './up-arrow.svg'
-import DownArrow from './down-arrow.svg'
+import LinkedList from '../../../../Vue/linked-list.js'
 
 export default {
     name: 'Columns',
@@ -18,22 +17,19 @@ export default {
     },
     data () {
         return {
-            upArrow: UpArrow,
-            downArrow: DownArrow,
-            images: ['middle', 'up', 'down'],
-            sortStatus: 'middle',
+            sortList : new LinkedList(),
+            sortStatus: '⌃',
         };
     },
-    mounted: function () {
+    created: function () {
+        this.sortList.add('⌃');
+        this.sortList.add('-');
+        this.sortList.add('⌄');
     },
     methods: {
         changeState() {
-            //TODO Linked list
-            let template = ['middle', 'up', 'down'];
-            if (this.images.length == 0) {
-                this.images = template;
-            }
-            this.sortStatus = this.images.shift();
+            this.sortList.walk();
+            this.sortStatus = this.sortList.get();
         }
     },
     computed: {
@@ -42,6 +38,14 @@ export default {
                 return this.upArrow;
             }
             return this.downArrow;
+        },
+        align() {
+            if (this.sortStatus == '⌄')
+                return 'carret-down';
+            else if (this.sortStatus == '-')
+                return 'carret-middle';
+            else
+                return 'carret-up';
         }
     },
     watch: { 
@@ -55,20 +59,19 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        cursor: crosshair;
     }
     .carret {
         font-size: 25px;
-        align-self: flex-end;
         padding-left: 5px;
     }
-    /*
-    img {
-        max-width: 20px;
-        margin-left: 5px;
-        margin-top: 2px;
+    .carret-up {
+        align-self: flex-end;
     }
-    */
-    .arrows {
-        vertical-align: middle;
+    .carret-down {
+        align-self: flex-start;
+    }
+    .carret-middle {
+        align-self: center;
     }
 </style>
