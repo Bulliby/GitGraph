@@ -2,16 +2,16 @@
         <div class="table">
             <div class="headers">
                 <div v-for="(header, index) of headers" class="header">
-                    <Columns>
+                    <Columns @sort="sortStats($event)" :header="header.value">
                         {{ header.value }}
                     </Columns>
                 </div>
             </div>
             <div class="datatable">
                 <div class="data-row" v-for="(repoStat in reposStats">
-                    <div class="column  name">
-                        {{ repoStat.stats.name }}
-                    </div>
+                    <a class="column  name link" :href="seeRepo(repoStat.stats.name)">
+                        {{ repoStat.stats.name }} <img width="12" height="12" :src="link" alt="SVG to specify that's a link"></img>
+                    </a>
                     <div class="column  clones">
                         {{ repoStat.stats.clones }}
                     </div>
@@ -25,8 +25,9 @@
 
 <script>
 
-import { RawStats, RepoStats } from '../../Vue/Stats.js'
-import Columns from './Components/Columns/Columns.vue'
+import { RawStats, RepoStats } from '../../Vue/Stats.js';
+import Columns from './Components/Columns/Columns.vue';
+import Link from './link.svg';
 
 export default {
     name: 'DataTable',
@@ -34,22 +35,23 @@ export default {
         Columns,
     },
     props: {
-        days: Number
+        days: Number,
     },
     data () {
         return {
             headers: [
                 { text: 'Names', value: 'name' },
-                { text: 'Unique clones', value: 'clone' },
-                { text: 'Unique views', value: 'view' },
+                { text: 'Unique clones', value: 'clones' },
+                { text: 'Unique views', value: 'views' },
             ],
             reposStats: [],
             rawStats: [],
             currentDate: new Date(),
+            link: Link,
         }
     },
     mounted: function () {
-        //this.getStats().then(this.filterStatsByDay);
+        this.getStats().then(this.filterStatsByDay);
     },
     methods: {
         getStats: function() {
@@ -86,6 +88,30 @@ export default {
                 this.reposStats.push(stat);
             });
         },
+        sortStats: function(event) {
+            const header = event.header;
+            const sortStatus = event.sortStatus;
+
+            this.reposStats.sort((a, b) => {
+                if (sortStatus == '⌄') {
+                    if (a.stats[header] > b.stats[header]) {
+                        return 1;
+                    } else {
+                        return - 1;
+                    }
+                } else if (sortStatus == '⌃') {
+                    console.log(header);
+                    if (a.stats[header] < b.stats[header]) {
+                        return 1;
+                    } else {
+                        return - 1;
+                    }
+                }
+            });
+        },
+        seeRepo(name) {
+            return `https://github.com/${this.$apiRequester.name}/${name}`
+        }
     },
     computed: {
     },
@@ -146,5 +172,9 @@ export default {
 .datatable {
     height: calc(40px * 10);
     overflow-y: auto;
+}
+.link {
+    text-decoration: none;         
+    color: black;
 }
 </style>

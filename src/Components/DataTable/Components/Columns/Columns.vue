@@ -1,5 +1,5 @@
 <template>
-        <div class="column-name" @click="changeState()">
+        <div class="column-name" @click="changeState($event)">
             <div class="text"><slot></slot></div>
             <div class="carret" :class="align">{{ sortStatus }}</div>
         </div>
@@ -14,6 +14,7 @@ export default {
     components: { 
     },
     props: {
+        header: String,
     },
     data () {
         return {
@@ -27,18 +28,13 @@ export default {
         this.sortList.add('⌄');
     },
     methods: {
-        changeState() {
+        changeState(event) {
             this.sortList.walk();
             this.sortStatus = this.sortList.get();
+            this.$emit('sort', {sortStatus: this.sortStatus, header: this.header});
         }
     },
     computed: {
-        selectImage() {
-            if (this.sortStatus == 'middle' || this.sortStatus == 'up') {
-                return this.upArrow;
-            }
-            return this.downArrow;
-        },
         align() {
             if (this.sortStatus == '⌄')
                 return 'carret-down';
