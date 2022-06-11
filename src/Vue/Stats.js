@@ -6,7 +6,7 @@
 //   By: waxer <wellsguillaume+at+gmail.com>             /   ____/_  _  __    //
 //                                                      /    \  _\ \/ \/ /    //
 //   Created: 2022/05/15 14:27:32 by waxer              \     \_\ \     /     //
-//   Updated: 2022/05/27 10:33:30 by waxer               \________/\/\_/      //
+//   Updated: 2022/06/07 10:23:49 by waxer               \________/\/\_/      //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,7 @@ class RepoStats {
         this.stats.name = name;
         this.stats.clones = (clones.length > 0) ? clones[0].uniques : 0;
         this.stats.views = (views.length > 0) ? views[0].uniques : 0;
-        this.stats.referrer = referrer;
+        this.stats.referrer = (referrer.data.length > 0) ? referrer.data : "";
     }
 }
 

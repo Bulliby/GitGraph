@@ -8,14 +8,21 @@
                 </div>
             </div>
             <div class="datatable">
-                <div class="data-row" v-for="(repoStat in reposStats">
-                    <a class="column  name link" :href="seeRepo(repoStat.stats.name)">
-                        {{ repoStat.stats.name }} <img width="12" height="12" :src="link" alt="SVG to specify that's a link"></img>
+                <div class="data-row" @mouseenter="enterToolTip(row)" @mouseleave="leaveToolTip(row)" v-for="(repoStat, row) in reposStats">
+                    <a class="column name link" :href="seeRepo(repoStat.stats.name)">
+                        {{ repoStat.stats.name }} <img width="12" height="12" :src="linkImg" alt="SVG to specify that's a link"></img>
                     </a>
-                    <div class="column  clones">
+                    <div>
+                        <div v-if="repoStat.stats.referrer" :ref="'tooltip-ref-' + row" class="tooltip">
+                            <div  v-for="referrer in repoStat.stats.referrer">
+                                {{ referrer.referrer }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column clones">
                         {{ repoStat.stats.clones }}
                     </div>
-                    <div class="column  views">
+                    <div class="column views">
                         {{ repoStat.stats.views }}
                     </div>
                 </div>
@@ -47,10 +54,14 @@ export default {
             reposStats: [],
             rawStats: [],
             currentDate: new Date(),
-            link: Link,
+            linkImg: Link,
+            visibility: false,
+            enterLeave: 0,
         }
     },
     mounted: function () {
+        this.$emit('click')
+        this.currentDate.setDate(this.currentDate.getDate() - 1);
         this.getStats().then(this.filterStatsByDay);
     },
     methods: {
@@ -100,7 +111,6 @@ export default {
                         return - 1;
                     }
                 } else if (sortStatus == '⌃') {
-                    console.log(header);
                     if (a.stats[header] < b.stats[header]) {
                         return 1;
                     } else {
@@ -111,7 +121,17 @@ export default {
         },
         seeRepo(name) {
             return `https://github.com/${this.$apiRequester.name}/${name}`
-        }
+        },
+        enterToolTip(row) {
+            if (this.reposStats[row].stats.referrer) {
+                this.$refs[`tooltip-ref-${row}`][0].style.display = 'block';
+            }
+        },
+        leaveToolTip(row) {
+            if (this.reposStats[row].stats.referrer) {
+                this.$refs[`tooltip-ref-${row}`][0].style.display = 'none';
+            }
+        },
     },
     computed: {
     },
@@ -173,8 +193,18 @@ export default {
     height: calc(40px * 10);
     overflow-y: auto;
 }
+
 .link {
     text-decoration: none;         
     color: black;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    background-color: rgb(120, 120, 120);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
 }
 </style>

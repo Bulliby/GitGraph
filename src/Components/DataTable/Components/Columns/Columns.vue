@@ -29,6 +29,7 @@ export default {
     },
     methods: {
         changeState(event) {
+            console.log(event);
             this.sortList.walk();
             this.sortStatus = this.sortList.get();
             this.$emit('sort', {sortStatus: this.sortStatus, header: this.header});
