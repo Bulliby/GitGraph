@@ -9,7 +9,7 @@
             </div>
             <div class="datatable">
                 <div class="data-row" @mouseenter="enterToolTip(row)" @mouseleave="leaveToolTip(row)" v-for="(repoStat, row) in reposStats">
-                    <a class="column name link" :href="seeRepo(repoStat.stats.name)">
+                    <a class="column name" :href="seeRepo(repoStat.stats.name)">
                         {{ repoStat.stats.name }} <img width="12" height="12" :src="linkImg" alt="SVG to specify that's a link"></img>
                     </a>
                     <div>
@@ -178,6 +178,15 @@ export default {
     border-bottom: solid rgba(16,16,16,0.16);
 }
 
+.column.name {
+    text-align: start;
+    text-decoration: none;         
+    color: black;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .column {
     width: calc(100% / 3);
     text-align: center;
@@ -185,18 +194,9 @@ export default {
     line-height: 40px;
 }
 
-.column.name {
-    text-align: start;
-}
-
 .datatable {
     height: calc(40px * 10);
     overflow-y: auto;
-}
-
-.link {
-    text-decoration: none;         
-    color: black;
 }
 
 .tooltip {

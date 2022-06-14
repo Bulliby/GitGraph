@@ -19,7 +19,7 @@ export default {
     data () {
         return {
             sortList : new LinkedList(),
-            sortStatus: '⌃',
+            sortStatus: '-',
         };
     },
     created: function () {
