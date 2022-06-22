@@ -3,9 +3,10 @@
         <header>
             <img class="github-img" alt="Brand Logo Github" :src="githublogo" />
             <img class="github-img-mob" alt="Brand Logo Github" :src="githublogomob" />
-            <Calendar  @days="updateDate($event)"/>
+            <Calendar v-if="connected" @days="updateDate($event)"/>
         </header>
-        <DataTable :days="days"/>
+        <Login v-if="!connected" />
+        <DataTable v-if="connected" :days="days"/>
     </div>
 </template>
 
@@ -15,12 +16,14 @@ import GitHubLogo from '../assets/github.svg'
 import GitHubLogoMob from '../assets/github-mob.svg'
 import Calendar from '../Components/Calendar/Calendar.vue'
 import DataTable from '../Components/DataTable/DataTable.vue'
+import Login from '../Components/Login/Login.vue'
 
 export default {
     name: 'Refacto',
     components: { 
         Calendar,
-        DataTable
+        DataTable,
+        Login
     },
     data () {
         return {
@@ -32,6 +35,14 @@ export default {
     methods: {
         updateDate(days) {
             this.days = days; 
+        },
+    },
+    computed: {
+        connected() {
+            if (this.$cookies.getCookie('oauth') == undefined) {
+                return false;
+            }
+            return true;
         }
     }
 }
