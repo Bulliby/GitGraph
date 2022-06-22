@@ -8,6 +8,7 @@ Vue.use(StatsLoader);
 Vue.use(CookiesLoader);
 Vue.use(ApiRequesterLoader, {url: 'https://api.github.com'})
 
+
 const app = new Vue({
     el: '#app',
     render: h => h(Refacto),

@@ -1,6 +1,14 @@
 const path = require('path');
 const webpack = require('webpack');
+const dotenv = require('dotenv');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+
+const env = dotenv.config({ path: path.resolve(process.cwd(), 'config/dev.env.js') }).parsed;
+
+const envKeys = Object.keys(env).reduce((prev, next) => {
+      prev[`process.env.${next}`] = JSON.stringify(env[next])
+      return prev
+}, {});
 
 module.exports = {
     entry: './src/Vue/app.js',
@@ -29,5 +37,6 @@ module.exports = {
     },
     plugins: [
         new VueLoaderPlugin(),
+        new webpack.DefinePlugin(envKeys),
     ]
 };

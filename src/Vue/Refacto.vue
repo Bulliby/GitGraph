@@ -3,15 +3,16 @@
         <header>
             <img class="github-img" alt="Brand Logo Github" :src="githublogo" />
             <img class="github-img-mob" alt="Brand Logo Github" :src="githublogomob" />
-            <Calendar v-if="connected" @days="updateDate($event)"/>
+            <Calendar v-if="connected()" @days="updateDate($event)"/>
         </header>
-        <Login v-if="!connected" />
-        <DataTable v-if="connected" :days="days"/>
+        <Login v-if="!connected()" />
+        <DataTable v-if="connected()" :days="days"/>
     </div>
 </template>
 
 <script>
 
+import axios from 'axios';
 import GitHubLogo from '../assets/github.svg'
 import GitHubLogoMob from '../assets/github-mob.svg'
 import Calendar from '../Components/Calendar/Calendar.vue'
@@ -36,13 +37,28 @@ export default {
         updateDate(days) {
             this.days = days; 
         },
-    },
-    computed: {
         connected() {
             if (this.$cookies.getCookie('oauth') == undefined) {
                 return false;
             }
             return true;
+        }
+    },
+    computed: {
+    },
+    created: function() {
+        const params = (new URL(document.location)).searchParams;
+        const code = params.get("code");
+        const state = params.get("state");;
+
+        if (!this.connected() && code && state) {
+            axios.post(process.env.OAUTH_URL, { code, state }, {withCredentials: true})
+                .then((r) => {
+                    this.$cookies.parseCookies();
+                    this.$apiRequester.setName(this.$cookies.getCookie('name'));
+                    this.$apiRequester.setToken(this.$cookies.getCookie('oauth'));
+                    location.href = process.env.REDIRECT_URL;
+            });
         }
     }
 }
