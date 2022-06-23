@@ -6,6 +6,7 @@
             <Calendar v-if="connected()" @days="updateDate($event)"/>
         </header>
         <Login v-if="!connected()" />
+        <Logout v-if="connected()" />
         <DataTable v-if="connected()" :days="days"/>
     </div>
 </template>
@@ -18,13 +19,15 @@ import GitHubLogoMob from '../assets/github-mob.svg'
 import Calendar from '../Components/Calendar/Calendar.vue'
 import DataTable from '../Components/DataTable/DataTable.vue'
 import Login from '../Components/Login/Login.vue'
+import Logout from '../Components/Logout/Logout.vue'
 
 export default {
     name: 'Refacto',
     components: { 
         Calendar,
         DataTable,
-        Login
+        Login,
+        Logout
     },
     data () {
         return {

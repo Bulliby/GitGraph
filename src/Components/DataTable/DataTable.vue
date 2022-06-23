@@ -152,10 +152,6 @@ export default {
 
 <style>
 
-.table {
-    padding-top: 50px;
-}
-
 .header {
     width: calc(100% / 3);
     font-weight: 700;
