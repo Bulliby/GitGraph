@@ -67,7 +67,7 @@ export default {
         this.max = new Date();
         this.date = new Date();
         this.date.setDate(this.date.getDate() - 1);
-        this.date = this.date.toISOString().split('T')[0];
+        his.date = this.date.toISOString().split('T')[0];
         this.$apiRequester.getRepositories().then((response) => {
             this.getAxiosPromises(response.data);
         }); 

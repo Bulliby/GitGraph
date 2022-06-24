@@ -6,7 +6,7 @@
 //   By: bulliby <wellsguillaume+at+gmail.com>           /   ____/_  _  __    //
 //                                                      /    \  _\ \/ \/ /    //
 //   Created: 2019/03/10 19:10:46 by bulliby            \     \_\ \     /     //
-//   Updated: 2022/04/16 14:21:54 by waxer               \________/\/\_/      //
+//   Updated: 2022/06/22 19:15:44 by bulliby             \________/\/\_/      //
 //                                                                            //
 // ************************************************************************** //
 
@@ -54,7 +54,7 @@ class ApiRequester {
     }
 
     getRepositories() {
-        return this.axios.get(`${this.baseUrl}/user/repos?affiliation=owner&sort=updated`);
+        return this.axios.get(`${this.baseUrl}/user/repos?type=owner`);
     }
 
     getClones(reponame) {
@@ -82,4 +82,4 @@ ApiRequesterLoader.install = function (Vue, options) {
         Vue.prototype.$apiRequester = new ApiRequester(options.url);
 }
 
-export default ApiRequesterLoader;
+export { ApiRequesterLoader, ApiRequester };
