@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const dotenv = require('dotenv');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 
 const env = dotenv.config({ path: path.resolve(process.cwd(), 'config/dev.env.js') }).parsed;
 
