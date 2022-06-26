@@ -1,6 +1,6 @@
 <template>
-    <div class="logout" @click="logout()">
-        ⎋ Logout
+    <div class="logout">
+        <span @click="logout()"> ⎋ Logout </span>
     </div>
 </template>
 
