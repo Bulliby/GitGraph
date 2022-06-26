@@ -172,6 +172,10 @@ export default {
     border-bottom: solid rgba(16,16,16,0.16);
 }
 
+.data-row:first-child .tooltip{
+    bottom: auto;
+}
+
 .column.name {
     text-align: start;
     text-decoration: none;         
@@ -202,6 +206,7 @@ export default {
     padding: 5px;
     border-radius: 5px;
     line-height: 25px;
+    bottom: 0;
 }
 
 .data-row:hover .tooltip{
