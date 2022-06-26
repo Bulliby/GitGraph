@@ -119,17 +119,7 @@ export default {
         },
         seeRepo(name) {
             return `https://github.com/${this.$apiRequester.name}/${name}`
-        },
-        enterToolTip(row) {
-            if (this.reposStats[row].stats.referrer) {
-                this.$refs[`tooltip-ref-${row}`][0].style.display = 'block';
-            }
-        },
-        leaveToolTip(row) {
-            if (this.reposStats[row].stats.referrer) {
-                this.$refs[`tooltip-ref-${row}`][0].style.display = 'none';
-            }
-        },
+        }
     },
     computed: {
     },
