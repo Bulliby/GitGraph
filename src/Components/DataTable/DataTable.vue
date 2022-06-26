@@ -172,6 +172,7 @@ export default {
     width: 100%;
     height: 40px;
     border-bottom: solid rgba(16,16,16,0.16);
+    position: relative;
 }
 
 .column.name {
