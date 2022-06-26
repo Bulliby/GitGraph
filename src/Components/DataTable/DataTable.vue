@@ -8,18 +8,16 @@
                 </div>
             </div>
             <div class="datatable">
-                <div class="data-row" @mouseenter="enterToolTip(row)" @mouseleave="leaveToolTip(row)" v-for="(repoStat, row) in reposStats">
+                <div class="data-row" v-for="(repoStat, row) in reposStats">
                     <a class="column name" :href="seeRepo(repoStat.stats.name)">
                         {{ repoStat.stats.name }} <img width="12" height="12" :src="linkImg" alt="SVG to specify that's a link"></img>
                     </a>
-                    <div>
-                        <div v-if="repoStat.stats.referrer" :ref="'tooltip-ref-' + row" class="tooltip">
-                            <div  v-for="referrer in repoStat.stats.referrer">
+                    <div class="column clones">
+                        <div class="tooltip" v-if="repoStat.stats.referrer.length">
+                            <div v-for="referrer in repoStat.stats.referrer" >
                                 {{ referrer.referrer }}
                             </div>
                         </div>
-                    </div>
-                    <div class="column clones">
                         {{ repoStat.stats.clones }}
                     </div>
                     <div class="column views">
@@ -172,7 +170,6 @@ export default {
     width: 100%;
     height: 40px;
     border-bottom: solid rgba(16,16,16,0.16);
-    position: relative;
 }
 
 .column.name {
@@ -189,6 +186,7 @@ export default {
     text-align: center;
     vertical-align: middle;
     line-height: 40px;
+    position: relative;
 }
 
 .datatable {
@@ -203,5 +201,10 @@ export default {
     color: white;
     padding: 5px;
     border-radius: 5px;
+    line-height: 25px;
+}
+
+.data-row:hover .tooltip{
+    display: block;
 }
 </style>
