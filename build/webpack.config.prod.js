@@ -1,6 +1,14 @@
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const webpack = require('webpack');
+const dotenv = require('dotenv');
+const { VueLoaderPlugin } = require('vue-loader');
+
+const env = dotenv.config({ path: path.resolve(process.cwd(), 'config/prod.env.js') }).parsed;
+
+const envKeys = Object.keys(env).reduce((prev, next) => {
+      prev[`process.env.${next}`] = JSON.stringify(env[next])
+      return prev
+}, {});
 
 module.exports = {
     entry: './src/Vue/app.js',
@@ -22,28 +30,13 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(png|jpg)$/,
-                use: [
-                    'file-loader'
-                ]
-            },
-            {
-                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-                use: [{
-                    loader: 'file-loader',
-                    options: {
-                        name: '[name].[ext]',
-                        outputPath: 'fonts/'
-                    }
-                }]
-            },
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+            }
         ]
     },
     plugins: [
         new VueLoaderPlugin(),
-        new webpack.DefinePlugin({
-            'process.env': require('../config/prod.env')
-        })
-        //new BundleAnalyzerPlugin()
+        new webpack.DefinePlugin(envKeys),
     ]
 };
