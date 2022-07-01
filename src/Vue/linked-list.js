@@ -6,14 +6,10 @@
 //   By: waxer <wellsguillaume+at+gmail.com>             /   ____/_  _  __    //
 //                                                      /    \  _\ \/ \/ /    //
 //   Created: 2022/05/28 19:01:14 by waxer              \     \_\ \     /     //
-//   Updated: 2022/05/28 22:37:52 by waxer               \________/\/\_/      //
+//   Updated: 2022/07/01 18:52:57 by bulliby             \________/\/\_/      //
 //                                                                            //
 // ************************************************************************** //
 
-
-/**
- *
- */
 
 export default class LinkedList {
     add(data) {

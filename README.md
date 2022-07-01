@@ -13,7 +13,7 @@ You can see it at [gitgraph.wellsguillaume.fr](https://gitgraph.wellsguillaume.f
 
 It also rely on a PHP server who handle the authentication process. This is a docker container that you can find : [here on dockerhub](https://hub.docker.com/r/waxer/gitgraph) with his dockerfile : [here](https://github.com/Bulliby/docker/tree/master/oauthGithub)
 
-![screenshot of Single Page Application](gitgraph.png)
+![screenshot of Single Page Application](.github/gitgraph.png)
 
 ## Installation
 
